@@ -1,0 +1,72 @@
+
+
+ {{>userheader}}
+
+<div class="text-center my-4">
+	<h2>All Products</h2>
+</div>
+
+<div class="container my-5 px-5">
+	<form>
+		<div class="row mb-3">
+			<div class="col-md-4">
+				<label for="category" class="form-label">Category:</label>
+				<select class="form-select" id="category" name="category">
+					<option value="">All</option>
+					{{#each categories}}
+					<option value="{{this._id}}">{{this.name}}</option>
+					{{/each}}
+				</select>
+			</div>
+			<div class="col-md-4">
+				<label for="sort" class="form-label">Sort By:</label>
+				<select class="form-select" id="sort" name="sort">
+					<option value="name">Name</option>
+					<option value="price">Price</option>
+					<option value="popularity">Popularity</option>
+				</select>
+			</div>
+			<div class="col-md-4">
+				<button type="submit" class="btn btn-primary mt-4">Filter</button>
+			</div>
+		</div>
+	</form>
+    <div class="row">
+		{{#each products}}
+		{{#if (or (not ../category) (eq ../category this.category))}}
+        <div class="col-md-4 p-5">
+			<div class="block2" style="width: 300px; height:500px">
+						<div class="block2-pic hov-img0">
+							<img src="/images/{{this.image.[0]}}" alt="IMG-PRODUCT">
+						<a href="/product-detail?id={{this._id}}" class="block2-btn flex-c-m stext-103 cl2 size-102 bg0 bor2 hov-btn1 p-lr-15 trans-04 ">
+								View Details
+							</a>
+						</div>
+
+						<div class="block2-txt flex-w flex-t p-t-14">
+							<div class="block2-txt-child1 flex-col-l ">
+								<a href="/product-detail?id={{this._id}}" class="stext-104 cl4 hov-cl1 trans-04 js-name-b2 p-b-6">
+									{{this.name}}
+								</a>
+
+								<span class="stext-105 cl3">
+									Rs.{{this.price}}
+								</span>
+							</div>
+
+							<div class="block2-txt-child2 flex-r p-t-3">
+								<a href="#" class="btn-addwish-b2 dis-block pos-relative js-addwish-b2">
+									<img class="icon-heart1 dis-block trans-04" src="images/icons/icon-heart-01.png" alt="ICON">
+									<img class="icon-heart2 dis-block trans-04 ab-t-l" src="images/icons/icon-heart-02.png" alt="ICON">
+								</a>
+							</div>
+						</div>
+					</div>
+		</div>
+		{{/if}}
+		{{/each}}
+    </div>
+</div>
+
+{{>userfooter}}
+

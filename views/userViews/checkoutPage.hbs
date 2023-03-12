@@ -1,0 +1,261 @@
+{{>userheader}}
+
+
+    <style>
+
+
+      .bd-placeholder-img {
+        font-size: 1.125rem;
+        text-anchor: middle;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        user-select: none;
+      }
+
+      @media (min-width: 768px) {
+        .bd-placeholder-img-lg {
+          font-size: 3.5rem;
+        }
+      }
+
+      .b-example-divider {
+        height: 3rem;
+        background-color: rgba(0, 0, 0, .1);
+        border: solid rgba(0, 0, 0, .15);
+        border-width: 1px 0;
+        box-shadow: inset 0 .5em 1.5em rgba(0, 0, 0, .1), inset 0 .125em .5em rgba(0, 0, 0, .15);
+      }
+
+      .b-example-vr {
+        flex-shrink: 0;
+        width: 1.5rem;
+        height: 100vh;
+      }
+
+      .bi {
+        vertical-align: -.125em;
+        fill: currentColor;
+      }
+
+      .nav-scroller {
+        position: relative;
+        z-index: 2;
+        height: 2.75rem;
+        overflow-y: hidden;
+      }
+
+      .nav-scroller .nav {
+        display: flex;
+        flex-wrap: nowrap;
+        padding-bottom: 1rem;
+        margin-top: -1px;
+        overflow-x: auto;
+        text-align: center;
+        white-space: nowrap;
+        -webkit-overflow-scrolling: touch;
+      }
+    </style>
+
+
+    <!-- Custom styles for this template -->
+    <link href="checkout.css" rel="stylesheet">
+  </head>
+  <body class="bg-none">
+
+<div class="container m-5">
+  <main>
+    <div class="py-1 text-center">
+
+      <h2>Checkout</h2>
+
+    </div>
+
+
+    <div class="row g-5">
+      <div class="col-md-5 col-lg-4 order-md-last">
+        <h4 class="d-flex justify-content-between align-items-center mb-3">
+
+
+          <span class="text-primary">Your cart</span>
+          <span class="badge bg-primary rounded-pill">{{userData.cart.length}}</span>
+        </h4>
+        <ul class="list-group mb-3">
+          {{#each cartItems}}
+          <li class="list-group-item d-flex justify-content-between lh-sm">
+            <div>
+              <h6 class="my-0">{{this.product.name}}</h6>
+              <br>
+                  <span>{{this.quantity}}*{{this.product.price}}=Rs.{{calculateItemPrice this}}</span>
+                  <hr>
+            </div>
+
+          </li>
+          {{/each}}
+
+          <li class="list-group-item d-flex justify-content-between">
+            <span>Total (INR)</span>
+
+          <strong id="cartTotal" class="cartTotal" >{{cartTotal}}</strong>
+
+          </li>
+        </ul>
+
+
+
+          <div class="input-group">
+            <input  type="text" id="coupon-text" class="form-control" placeholder="Promo code">
+            <button id="coupon" class="btn btn-secondary">Redeem</button>
+            <p style="margin-top:10px;color:brown">Apply HAPPY10 to avail discount of 10% on orders above 499  </p>
+          </div>
+          <div id="coupon-error">
+
+          </div>
+
+      </div>
+      <div class="col-md-7 col-lg-8 border border-2 border-secondary">
+        <p class="m-3">Billing address</p>
+        <a href="/add-address">+Add new address</address></a>
+
+  {{#each address}}
+  <div class="address">
+    <input type="radio" id="{{_id}}" name="address" value="{{_id}}" checked>
+    <label for="{{_id}}">
+      {{name}}<br>
+      {{mobile}} <br>
+      {{address1}}<br>
+      {{address2}}<br>
+      {{city}}<br>
+      {{pin}}
+      <br>
+    </label>
+  </div>
+  {{/each}}
+<hr>
+  <h6 class="mb-3">Payment</h6>
+
+  <div class="my-3">
+                <div class="form-check">
+                  <input id="cashondelivery" value="cashondelivery" name="paymentMethod" type="radio" class="form-check-input" checked>
+                  <label class="form-check-label" for="credit" >Cash on delivery</label>
+
+                </div>
+
+                <div class="form-check">
+                <input id="razorpay" name="paymentMethod" type="radio" value="razorpay" class="form-check-input">
+                <label class="form-check-label" for="razor">Razor Pay</label><br>
+                </div>
+ </div>
+   <button id="order-button" class="btn btn-warning m-3" type="submit">PROCEED TO ORDER</button>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script>
+
+//const address=document.getElementsByName("address")
+const cartTotalElement = document.querySelector('.cartTotal');
+const cartTotalValue = cartTotalElement.innerText
+
+
+ const couponCode=document.getElementById('coupon-text')
+
+ //console.log(address,cartTotalValue)
+
+const cashondeliveryRadio = document.getElementById("cashondelivery");
+const razorpayRadio = document.getElementById("razorpay");
+const submitBtn = document.getElementById("order-button");
+const addressRadios = document.getElementsByName("address");
+let selectedAddressId;
+const couponButton= document.getElementById('coupon')
+
+submitBtn.addEventListener("click", function() {
+
+  addressRadios.forEach(function(radio) {
+  if (radio.checked) {
+    selectedAddressId = radio.value;
+  }
+});
+
+  let selectedPayment = cashondeliveryRadio.checked ? cashondeliveryRadio.value : (razorpayRadio.checked ? razorpayRadio.value : null);
+
+
+  console.log(selectedPayment,cartTotalValue,selectedAddressId);
+fetch('/order-summary',{
+  method:"POST",
+  headers:{
+    "Content-type":"application/json"
+  },
+  body:JSON.stringify({
+    address:selectedAddressId,
+    cartTotal:cartTotalValue,
+    paymentMethod:selectedPayment
+  })
+
+}).then((res)=>res.json())
+.then((order)=>{
+  console.log(order)
+
+  // Accessing contents inside the order object
+  console.log(order.orderId);
+  console.log(order.address);
+  console.log(order.orderBill);
+  console.log(order.paymentMode);
+
+  if(order.paymentMode ==="cashondelivery")
+  {window.location.href = '/order-success';}
+  else{window.location.href='/payments'}
+})
+
+
+
+
+});
+
+couponButton.addEventListener("click", async function(){
+  try {
+    const inputValue = document.getElementById("coupon-text").value;
+    const cartTotalElement = document.querySelector('.cartTotal');
+    const cartTotalValue = cartTotalElement.innerText;
+
+    console.log(inputValue)
+
+    const response = await fetch('/coupon-apply',{
+      method:"POST",
+      headers:{
+        "Content-type":"application/json"
+      },
+      body:JSON.stringify({
+        code:inputValue,
+        cartTotal:cartTotalValue
+      })
+    });
+
+    console.log(response)
+
+    /*if (!response.ok) {
+      throw new Error("Network response was not ok");
+    }*/
+
+    const data = await response.json();
+
+    if (data.error) {
+      // handle error response
+      console.log(data.error);
+      document.getElementById("coupon-error").textContent = data.error;
+    } else {
+      console.log(data.cartTotal);
+      document.getElementById("cartTotal").innerHTML = data.cartTotal;
+    }
+
+  } catch (error) {
+    // handle error
+    console.error("Error:", error);
+  }
+});
+
+
+</script>
+
+
+{{>userfooter}}

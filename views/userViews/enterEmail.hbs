@@ -1,0 +1,31 @@
+
+
+{{>userheader}}
+<div class="container my-5">
+      <div class="row">
+        <div class="col-md-6 m-auto">
+          <div class="card card-body">
+            <h3 class="text-center">Enter Email</h3>
+            <form action="/forget" method="post">
+              <div class="form-group">
+                <label for="email">Enter Email:</label>
+                <input type="text" class="form-control" name="email" id="email" placeholder="Enter Email">
+              </div>
+              <button type="submit" class="btn btn-primary btn-block">Submit</button>
+              {{#if message}}
+              <p class="text-center text-danger p-2">{{message}}</p>
+              {{/if}}
+              {{#if message1}}
+              <p class="text-center text-danger p-2">{{message1}}</p>
+              {{/if}}
+
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+
+
+{{>userfooter}}

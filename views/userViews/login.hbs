@@ -1,0 +1,44 @@
+{{>userheader}}
+
+
+<div class="container" >
+        <form id="form" action="" method="post">
+            <h1>Login</h1>
+
+            <div class="input-control">
+                <label for="email">Email</label>
+                <input id="email" name="email" type="text">
+                <div class="error"></div>
+            </div>
+            <div class="input-control">
+                <label for="password">Password</label>
+                <input id="password"name="password" type="password">
+                <div class="error"></div>
+            </div>
+
+            <button type="submit">LOGIN</button>
+            <a href="/signup">Signup Here</a>
+                {{#if message1}}
+                      <div class="alert text-success  text-center" role="alert">{{message1}} </div>
+                {{/if}}
+
+                 {{#if message2}}
+                      <div class="alert text-danger  text-center" role="alert">{{message2}} </div>
+                {{/if}}
+
+                 {{#if message3}}
+                      <div class="alert text-danger  text-center" role="alert">{{message3}} </div>
+                {{/if}}
+                {{#if mymessage}}
+                  <div class="alert text-success  text-center" role="alert">{{mymessage}} </div>
+                  {{/if}}
+
+
+<div><a href="/forget">Forget Password?</a></div>
+        </form>
+    </div>
+<script src="/js/loginvalidation.js"></script>
+
+
+
+{{>userfooter}}

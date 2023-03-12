@@ -1,0 +1,84 @@
+
+{{>userheader}}
+<link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<!------ Include the above in your HEAD tag ---------->
+
+<div class="container emp-profile">
+            <form method="post">
+                <div class="row">
+                    <div class="col-md-4">
+                        {{!-- <div class="profile-img">
+                            <img src="" alt=""/>
+                            <div class="file btn btn-lg btn-primary">
+                                Change Photo
+                                <input type="file" name="file"/>
+                            </div>
+                        </div> --}}
+                    </div>
+                    <div class="col-md-6">
+                        <div class="profile-head">
+                                    <h5>
+                                        {{userData.name}}
+                                    </h5>
+
+
+                            <ul class="nav nav-tabs" id="myTab" role="tablist">
+                                <li class="nav-item">
+                                    <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">Adresses</a>
+                                </li>
+
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                       <a href="/add-address">Add new address</a>
+                </div>
+                <div class="row">
+                    <div class=" col-md-4 ">
+                        <div class="profile-work border border-primary">
+                            <a href="/profile">Your Account</a><br>
+                            <a href="/address">Your Adresses</a><br/>
+                            <a href="/orders">Your Orders</a>
+                        </div>
+                    </div>
+                    <div class="col-md-8" >
+
+                        <div class="tab-content profile-tab" id="myTabContent">
+                            <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+                                 {{#each userAddress}}
+                                <div class="address" id="rcorners3" style="width: 500px;">
+                                        <div class="name">{{this.name}}</div>
+
+                                        <div class="mobile">{{this.mobile}}</div>
+
+                                        <div class="address1">{{this.address1}}</div>
+
+                                        <div class="address2">{{this.address2}}</div>
+
+                                        <div class="city">{{this.city}}</div>
+
+                                        <div class="state">{{this.state}}</div>
+
+                                        <div class="zip">{{this.zip}}</div>
+                                        <div>
+                                            <a class="btn btn-secondary" href="/delete?id={{this.id}}">Delete</a>
+                                            <a class="btn btn-secondary" href="/edit-address?id={{this.id}}">Edit</a>
+                                        </div>
+                                        </div>
+  {{/each}}
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+{{>userfooter}}

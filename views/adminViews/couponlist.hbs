@@ -1,0 +1,114 @@
+{{>adminheader}}
+
+<style>
+    body {
+        height: 100%;
+        margin: 0;
+        background: linear-gradient(45deg, #49a09d, #5f2c82);
+        font-family: sans-serif;
+        font-weight: 100;
+    }
+
+    .container {
+        position: relative;
+        padding-top: 50px;
+       padding-left: 50px;
+       padding-right: 50px;
+        max-width: 100%;
+        overflow-x: auto;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        overflow: hidden;
+        box-shadow: 0 0 20px rgba(0,0,0,0.1);
+    }
+
+    th,
+    td {
+        padding: 15px;
+        background-color: rgba(255,255,255,0.2);
+        color: #fff;
+    }
+
+    th {
+        text-align: left;
+    }
+
+    thead {
+        th {
+            background-color: #55608f;
+        }
+    }
+
+    tbody {
+        tr {
+            &:hover {
+                background-color: rgba(255,255,255,0.3);
+            }
+        }
+        td {
+            position: relative;
+            &:hover {
+                &:before {
+                    content: "";
+                    position: absolute;
+                    left: 0;
+                    right: 0;
+                    top: -9999px;
+                    bottom: -9999px;
+                    background-color: rgba(255,255,255,0.2);
+                    z-index: -1;
+                }
+            }
+        }
+    }
+
+    /* Media Queries */
+    @media only screen and (max-width: 768px) {
+        /* Adjust the padding and font-size for smaller screens */
+        .container {
+            padding-top: 30px;
+        }
+        th,
+        td {
+            padding: 10px;
+            font-size: 12px;
+        }
+    }
+</style>
+
+
+<div class="container">
+	<table>
+		<thead>
+			<tr>
+				<th>CODE</th>
+				<th>DISCOUNT</th>
+				<th>EXPITY</th>
+				<th>ACTION</th>
+				{{!-- <th>Column 5</th> --}}
+			</tr>
+		</thead>
+		<tbody>
+            {{#each couponData}}
+			<tr>
+				<td>{{this.code}}</td>
+				<td>{{this.value}}</td>
+				<td>{{formatDate this.expiryDate "DD-MM-YYY"}}</td>
+				<td>
+                    <a class="btn btn-success" href="/admin/edit-coupon/{{this._id}}">EDIT</a>
+                    <a class="btn btn-danger" href="/admin/delete-coupon/{{this._id}}">DELETE</a>
+                </td>
+				{{!-- <td>Cell 5</td> --}}
+			</tr>
+    {{/each}}
+
+		</tbody>
+	</table>
+    <div>
+       <button style="margin-top:5px
+       " onclick="window.location.href='/admin/create-coupon'">Create</button>
+    </div>
+</div>
