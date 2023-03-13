@@ -15,8 +15,6 @@ const Razorpay = require('razorpay');
 
 const usersRouter = require('./routes/users');
 const adminRouter = require('./routes/admin');
-// const categoryRouter = require('./routes/category');
-// const productRouter=require('./routes/product');
 
 
 const app = express();

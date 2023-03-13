@@ -175,9 +175,9 @@ const updateProduct=async(req,res)=>{
                 message:'product canot be upated'
             })
             }else{
-             //res.status(200).json(product)
+
             res.redirect("/admin/product")
-            //res.render('adminViews/product')
+
             }
 
     } catch (error) {
@@ -222,13 +222,13 @@ const userproductload = async (req, res) => {
       const { category, sort } = req.query;
       console.log(req.query);
 
-      // Construct the filter object based on the category query parameter
+
       const filter = { is_blocked: false };
       if (category) {
         filter.category = category;
       }
 
-      // Construct the sort object based on the sort query parameter
+
       let sortOption = {};
       if (sort) {
         if (sort === "name") {
@@ -293,12 +293,13 @@ const womenProductLoad= async(req,res)=>{
      const userData=req.session.user
 
     const productWomen= await Product.find({ category: categoryId,is_blocked:false })
+    console.log(productWomen,categoryId);
     if(userData){
     console.log(productWomen);
     res.render('userViews/womenpage',{women:productWomen,userData})
      }
      else{
-        res.render('userViews/womenpage')
+        res.render('userViews/womenpage',{women:productWomen})
      }
 
 }
