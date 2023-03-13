@@ -114,11 +114,11 @@
 			const elem= document.getElementById(id)
 			console.log(elem.value)
 				if( act === 'inc'){
-				const stocValue = stock;
+				/*const stocValue = stock;
 				if (elem.value < stocValue) {
   				elem.value = Number(elem.value) + 1;
-				}
-				//elem.value  ? elem.value=Number(elem.value)+1 : ''
+				}*/
+				elem.value  ? elem.value=Number(elem.value)+1 : ''
 					console.log(stock)
 			}else if( act === 'dec' ){
 				elem.value > 1 ? elem.value=Number(elem.value)-1 :''

@@ -23,7 +23,7 @@
 @media only screen and (min-width: 768px) {
   .col-md-3 {
     order: -1;
-    margin-right: 30
+    margin-left;: 10px
   }
 }
 
@@ -57,7 +57,7 @@
       <div class="row">
         {{#each products}}
         {{#if (or (not ../category) (eq ../category this.category))}}
-        <div class="col-md-4 p-3">
+        <div class="col-md-4 ">
           <div class="block2" style="width: 300px; height:500px">
             <div class="block2-pic hov-img0">
               <img src="/images/{{this.image.[0]}}" alt="IMG-PRODUCT">

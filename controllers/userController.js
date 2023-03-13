@@ -73,7 +73,7 @@ const loadHome = async (req, res) => {
         res.render("userViews/home", {
           categories: categories,
           userData: userlogData,
-          banner:banner 
+          banner:banner
         });
       } else {
         res.render("userViews/home", { categories: categories,banner:banner });
@@ -153,7 +153,7 @@ const verifyLogin = async (req, res) => {
     const email = req.body.email;
     const password = req.body.password;
 
-    const categories = await Category.find();
+
 
     const userData = await User.findOne({ email: email });
     const isBlock = userData.is_blocked;
@@ -166,14 +166,12 @@ const verifyLogin = async (req, res) => {
 
           req.session.userData = true;
           const mySession = req.session.user;
-
-          // res.render('userViews/home',{mySession,categories})
           res.redirect("/home");
         } else {
           res.render("userViews/login", {
             message1: "Email or Password in correct",
           });
-          // res.redirect("/home")
+
         }
       } else {
         res.render("userViews/login", { message2: "Un Authersised aceess !!" });
@@ -202,7 +200,7 @@ const profileLoad = async (req, res) => {
     const userData = req.session.user;
     res.render("userViews/userprofile", { userData });
 
-    // res.render('userViews/userprofile')
+
   } catch (error) {
     console.log(error.message);
   }
@@ -531,13 +529,13 @@ res.redirect('/address')
   try {
     const userData = req.session.user
     let data = await User.find({_id:userData._id},{_id:0, cart:1}).lean()
-    console.log(data[0].cart,'data cartt');
+   
 
     data[0].cart.forEach((val,i)=>{
       val.quantity = req.body.datas[i].quantity
     })
 
-    console.log(data[0].cart,'<<updated cart array 149');
+
 
     await User.updateOne({_id:userData._id},{$set:{cart:data[0].cart}})
 

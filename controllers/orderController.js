@@ -158,13 +158,18 @@ const orderSummary = async (req, res) => {
 const viewOrders=async(req,res)=>{
   try {
     const userData=req.session.user
-    const orderData= await Order.find({owner:userData._id}).populate("items.product").populate("address").sort({ createdAt: -1 });
+    const orderData= await Order.find({
+      owner: userData._id,
+      status: { $nin: ["returned"] }
+  }).populate("items.product").populate("address").sort({ createdAt: -1 });
+
+  const pastOrder=await Order.find({owner:userData._id,status:{$in:["returned"]}}).populate("items.product").populate("address").sort({ createdAt: -1 });
 
 
 
     console.log(orderData);
 
-    res.render('userViews/viewOrders',{orderData:orderData,userData:userData})
+    res.render('userViews/viewOrders',{orderData:orderData,userData:userData,pastOrder})
 
   } catch (error) {
 console.log(error.message);
@@ -302,7 +307,7 @@ const couponApply = async (req, res) => {
       await coupon.save();
 
 
-      res.json({ cartTotal: data });
+      res.json({ cartTotal: data,discount:discount });
     } else {
       res.status(400).json({ error: "Cart total must be greater than 499" });
     }

@@ -90,6 +90,7 @@
 				<th>IMAGE</th>
 				<th>STATUS</th>
 				<th>DATE</th>
+				<th>ACTION</th>
 
 
 			</tr>
@@ -100,10 +101,14 @@
     <tr>
       <td>{{this.title}}</td>
        <td>{{this.description}}</td>
-       <td ><img style="width:100px;" src="{{this.image}}" alt=""></td>
+       <td ><img style="width:100px;" src="/images/{{this.image}}" alt=""></td>
 
        <td>{{this.status}}</td>
        <td>{{formatDate this.createdAt 'DD-MM-YYYY'}}</td>
+       <td>
+        <a class="btn btn-success" href="/admin/edit-banner?id={{this._id}}">EDIT</a>
+        <a class="btn btn-danger" href="/admin/delete-banner?id={{this._id}}">DELETE</a>
+       </td>
 
 
     </tr>

@@ -3,7 +3,7 @@
     .table {
     border-collapse: separate;
     border-spacing:0 20px;
-    margin-left: 100px;
+
 }
 .detail-button{
 
@@ -34,7 +34,7 @@
 
        <td><strong>ORDER ID</strong></td>
       <td><strong>DATE</strong></td>
-      {{!-- <td><strong>ADDRESS</strong></td> --}}
+
       <td><strong>PAYMENT MODE</strong></td>
       <td><strong>TOTAL</strong></td>
       <td><strong>ACTION</strong></td>
@@ -45,18 +45,12 @@
 
 
  {{#each orderData}}
-    {{!-- {{#each this.items}} --}}
+
     <tbody>
     <tr>
 
 
-        {{!-- <td>{{../orderId}}</td>
-       <td>{{../orderDate}}</td>
-       <td>{{../address.name}},{{../address.address1}}</td>
 
-       <td>{{../paymentMode}}</td>
-
-       <td>{{../orderBill}}</td> --}}
        <td>{{this.orderId}}</td>
        <td>{{formatDate this.orderDate  "DD-MM-YYY"}}</td>
        <td>{{this.paymentMode}}</td>
@@ -66,7 +60,49 @@
        <a style="text-decoration: none;" class="detail-button" href="/order-details?id={{this._id}}">VIEW DETAILS</a>
 </td>
   </tbody>
-    {{!-- {{/each}} --}}
+
+  {{/each}}
+
+
+
+
+</table>
+
+
+ <h5 id="header">Past Orders</h5>
+
+  <table class="table">
+  <thead style="color:brown; size: 20px">
+
+       <td><strong>ORDER ID</strong></td>
+      <td><strong>DATE</strong></td>
+
+      <td><strong>PAYMENT MODE</strong></td>
+      <td><strong>TOTAL</strong></td>
+      <td><strong>ACTION</strong></td>
+
+
+    </thead>
+
+
+
+ {{#each pastOrder}}
+
+    <tbody>
+    <tr>
+
+
+
+       <td>{{this.orderId}}</td>
+       <td>{{formatDate this.orderDate  "DD-MM-YYY"}}</td>
+       <td>{{this.paymentMode}}</td>
+       <td>{{this.orderBill}}</td>
+       <td>
+       {{!-- <button  class="detail-button"> <a href="/order-details"></a> VIEW DETAILS</button> --}}
+       <a style="text-decoration: none;" class="detail-button" href="/order-details?id={{this._id}}">VIEW DETAILS</a>
+</td>
+  </tbody>
+
   {{/each}}
 
 

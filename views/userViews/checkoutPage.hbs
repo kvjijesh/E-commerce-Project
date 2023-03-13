@@ -107,8 +107,16 @@
             <button id="coupon" class="btn btn-secondary">Redeem</button>
             <p style="margin-top:10px;color:brown">Apply HAPPY10 to avail discount of 10% on orders above 499  </p>
           </div>
-          <div id="coupon-error">
+          <div id="coupon-error"></div>
 
+          <div>
+
+            <strong >Discount:</strong><p id="discount">0</p>
+
+          </div>
+          <div>
+            <strong>Grand Total:</strong>
+            <p id="grandTotal">{{cartTotal}}</p>
           </div>
 
       </div>
@@ -160,7 +168,7 @@ const cartTotalValue = cartTotalElement.innerText
 
  const couponCode=document.getElementById('coupon-text')
 
- //console.log(address,cartTotalValue)
+
 
 const cashondeliveryRadio = document.getElementById("cashondelivery");
 const razorpayRadio = document.getElementById("razorpay");
@@ -196,7 +204,7 @@ fetch('/order-summary',{
 .then((order)=>{
   console.log(order)
 
-  // Accessing contents inside the order object
+
   console.log(order.orderId);
   console.log(order.address);
   console.log(order.orderBill);
@@ -231,25 +239,27 @@ couponButton.addEventListener("click", async function(){
       })
     });
 
-    console.log(response)
+
 
     /*if (!response.ok) {
       throw new Error("Network response was not ok");
     }*/
 
     const data = await response.json();
+    console.log(data);
 
     if (data.error) {
-      // handle error response
+
       console.log(data.error);
       document.getElementById("coupon-error").textContent = data.error;
     } else {
-      console.log(data.cartTotal);
-      document.getElementById("cartTotal").innerHTML = data.cartTotal;
+
+      document.getElementById("grandTotal").innerHTML = data.cartTotal;
+      document.getElementById('discount').innerHTML=data.discount
     }
 
   } catch (error) {
-    // handle error
+
     console.error("Error:", error);
   }
 });

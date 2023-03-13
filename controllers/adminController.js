@@ -102,7 +102,7 @@ const verifyAdminLogin = async(req,res)=>{
     try {
         const email = req.body.email
         const password= req.body.password
-        console.log(email,password);
+
         const adminData = await Admin.findOne({email:email})
         console.log(adminData);
         if(adminData){
@@ -110,7 +110,7 @@ const verifyAdminLogin = async(req,res)=>{
             if(passwordMatch){
                 if(adminData.role=="Admin"){
                     req.session.admin_id=adminData._id
-                    console.log(req.session);
+
                     res.redirect('admin/home')
                 }
                 else{
@@ -134,7 +134,7 @@ const loadDashboard =async(req,res)=>{
   const id=req.session.admin_id
 
         const adminData=await Admin.findById({_id:id})
-        console.log({_id:req.session.admin_id});
+
         res.render('adminViews/adminDashboard',{admin:adminData})
 
     } catch (error) {
@@ -143,7 +143,7 @@ const loadDashboard =async(req,res)=>{
     }
 const logout= async(req,res)=>{
         try {
-            // req.session.admin_id==null
+
              req.session=null
             //req.session.destroy();
             console.log(req.session);
@@ -169,15 +169,15 @@ const userList= async(req,res)=>{
 const blockUser= async(req,res)=>{
         try {
             const blocked= await User.findById(req.params.id)
-    console.log(blocked);
+
     const userblocked = blocked.is_blocked
-    console.log(userblocked);
+
 
 if(userblocked){
 
   unblockfun(req.params.id)
 res.redirect('/admin/userList')
-  console.log(userblocked);
+
 }else{
     blockfun(req.params.id)
 
@@ -199,32 +199,22 @@ res.redirect('/admin/userList')
 
 
     const createCouponLoad= async(req,res)=>{
-
         res.render('adminViews/createCoupon')
-
-
-
     }
     const createCoupon= async(req,res)=>{
         console.log(req.body);
 
         const coupon = await Coupon.create(req.body);
-        //res.status(201).json(coupon);
         res.redirect('/admin/coupon')
 
     }
 
 const orderList=async(req,res)=>{
-const orderData = await Order.find({status:{$ne:'delivered'}})
+const orderData = await Order.find({status:{$ne:'returned'}})
   .populate("items.product")
   .populate("address")
   .sort({ createdAt: -1 });
-
-
         res.render('adminViews/orderList',{orderData:orderData})
-
-
-
     }
 const changeStatus=async(req,res)=>{
 
@@ -251,13 +241,13 @@ const changeStatus=async(req,res)=>{
         }
     }
  const editCoupon=async(req,res)=>{
-try {
+    try {
     const couponId=req.params.id
     const coupon = await Coupon.findById(couponId);
     res.render('adminViews/editcoupon',{coupon})
-} catch (error) {
+        } catch (error) {
 
-}
+    }
 
  }
  const updateCoupon=async(req,res)=>{
@@ -288,8 +278,6 @@ try {
 
 const createBannerLoad=async(req,res)=>{
     res.render('adminViews/createBanner')
-
-
 }
 
 const createBanner = async (req, res) => {
@@ -297,13 +285,13 @@ const createBanner = async (req, res) => {
 
     const file = req.file;
         const fileName = file.filename
-        const basePath = '/images/';
+
 
     try {
       const banner = new Banner({
         title:req.body.title,
         description:req.body.description,
-        image:`${basePath}${fileName}`,
+        image:fileName,
         linkUrl:req.body.linkUrl,
         status:req.body.status
       });
@@ -315,6 +303,63 @@ const createBanner = async (req, res) => {
 
     }
   };
+
+  const editBannerLoad= async(req,res)=>{
+    try {
+
+
+        const banner = await Banner.findById(req.query.id)
+
+        res.render('adminViews/editBanner',{banner:banner})
+
+    } catch (error) {
+        console.log(error.message);
+    }
+  }
+const editBanner =async(req,res)=>{
+
+    try {
+
+    const bannerId = req.query.id;
+    const bannerImg= await Banner.findById(bannerId)
+    const exstImg=bannerImg.image
+
+    console.log(exstImg,'kkkk');
+    let upImage
+
+     const file = req.file;
+    //  const fileName = file.filename
+    //  const basePath = '/images/';
+
+
+    if(file){
+        const newImage =   file.filename
+        upImage = newImage
+        bannerImg.image = upImage
+    }else{
+        upImage  =exstImg
+    }
+
+
+    await Banner.findByIdAndUpdate(bannerId,{
+        title:req.body.title,
+        description:req.body.description,
+        image:upImage ,
+        linkUrl:req.body.linkUrl,
+        status:req.body.status
+
+    },{new:true})
+
+    res.redirect('/admin/banner');
+
+
+
+    } catch (error) {
+        console.log(error);
+    }
+  }
+
+
 
 
 
@@ -339,7 +384,9 @@ module.exports={
     updateCoupon,
     bannerLoad,
     createBannerLoad,
-    createBanner
+    createBanner,
+    editBannerLoad,
+    editBanner
 
 
 }

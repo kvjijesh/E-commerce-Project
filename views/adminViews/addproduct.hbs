@@ -1,4 +1,5 @@
 {{>adminheader}}
+
     <style>
       .container {
         display: flex;
@@ -28,6 +29,9 @@
         width: 100%;
         margin-top: 1em;
       }
+      .error-message{
+        color: red;
+      }
     </style>
   </head>
   <body>
@@ -37,18 +41,22 @@
         <div class="form-group">
           <label for="name">Name</label>
           <input type="text" class="form-control" id="name" name="name">
+          <div class="error-message"></div>
         </div>
         <div class="form-group">
           <label for="description">Description</label>
           <textarea class="form-control" id="description" rows="3" name="description"></textarea>
+          <div class="error-message"></div>
         </div>
         <div class="form-group">
           <label for="price">Price</label>
           <input type="text" class="form-control" id="price" name="price">
+          <div class="error-message"></div>
         </div>
         <div class="form-group">
           <label for="image">Image</label>
           <input type="file" name="images" id="image" multiple >
+          <div class="error-message"></div>
         </div>
 
         <div class="form-group">
@@ -57,14 +65,15 @@
             {{#each category}}
             <option value="{{this._id}}">{{this.name}}</option>
             {{/each}}
-            {{!-- <option value="63eb13aca25f9c81bec33340">Women</option>
-            <option value="63ed346093de88939e5acaa5">Accesories</option> --}}
+
           </select>
+          <div class="error-message"></div>
 
         </div>
         <div class="form-group">
           <label for="stock">Stock</label>
-          <input type="number" class="form-control" id="stock" name="stock">
+          <input type="text" class="form-control" id="stock" name="stock">
+          <div class="error-message"></div>
         </div>
         <button type="submit" class="btn btn-primary">Add Product</button>
       </form>
@@ -77,6 +86,78 @@
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous"></script>
+
+
   </body>
 </html>
+<script>
+  const form = document.querySelector('form');
+  const nameInput = document.getElementById('name');
+  const descriptionInput = document.getElementById('description');
+  const priceInput = document.getElementById('price');
+  const imageInput = document.getElementById('image');
+  const categoryInput = document.getElementById('category');
+  const stockInput = document.getElementById('stock');
+  const errorMessages = document.querySelectorAll('.error-message');
+
+
+
+  form.addEventListener('submit', (e) => {
+
+
+    errorMessages.forEach(message => message.innerText = '');
+
+    // Check for name input
+    if (nameInput.value.trim() === '') {
+      e.preventDefault();
+      displayErrorMessage(nameInput, 'Please enter a name');
+
+    }
+
+    // Check for description input
+    if (descriptionInput.value.trim() === '') {
+      e.preventDefault();
+      displayErrorMessage(descriptionInput, 'Please enter a description');
+
+    }
+
+    // Check for price input
+    if (priceInput.value.trim() === '') {
+      e.preventDefault();
+      displayErrorMessage(priceInput, 'Please enter a price');
+
+    } else if (!(/^\d+(\.\d{1,2})?$/.test(priceInput.value))) {
+      e.preventDefault();
+      displayErrorMessage(priceInput, 'Please enter a valid price');
+
+    }
+
+    // Check for image input
+    if (imageInput.files.length === 0) {
+      e.preventDefault();
+      displayErrorMessage(imageInput, 'Please select at least one image');
+
+    }
+
+
+
+
+    // Check for stock input
+    if (stockInput.value.trim() === '') {
+
+      e.preventDefault();
+      displayErrorMessage(stockInput, 'Please enter a stock quantity');
+
+     } else if (!(/^\d+(\.\d{1,2})?$/.test(stockInput.value))) {
+      e.preventDefault();
+      displayErrorMessage(stockInput, 'Please enter a valid stock');
+
+    }
+  });
+
+  function displayErrorMessage(input, message) {
+    const errorMessage = input.nextElementSibling;
+    errorMessage.innerText = message;
+  }
+</script>
 

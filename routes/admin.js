@@ -39,5 +39,7 @@ router.post('/edit-coupon/:id',adminController.updateCoupon)
 router.get('/banner',auth.isAdminLogin,adminController.bannerLoad)
 router.get('/create-banner',auth.isAdminLogin,adminController.createBannerLoad)
 router.post('/create-banner',auth.isAdminLogin,store.single('image'),adminController.createBanner)
+router.get('/edit-banner',auth.isAdminLogin,adminController.editBannerLoad)
+router.post('/edit-banner',store.single('image'),adminController.editBanner)
 
 module.exports = router;
