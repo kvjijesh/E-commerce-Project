@@ -87,9 +87,10 @@ address p {
     </div>
     <div class="next">
         {{log orderData}}
-  {{#if ( eq orderData.status "ordered")}}
-      <button class="btn btn-danger mx-5" onclick="cancelOrder('{{orderData._id}}')">Cancel Order</button>
+{{#if (or (eq orderData.status "ordered") (eq orderData.status "shipped"))}}
+   <button class="btn btn-danger mx-5" onclick="cancelOrder('{{orderData._id}}')">Cancel Order</button>
 {{/if}}
+
 
     {{#if (eq orderData.status "delivered")}}
        <button class="btn btn-success mx-5" onclick="returnOrder('{{orderData._id}}')">Return Order</button>

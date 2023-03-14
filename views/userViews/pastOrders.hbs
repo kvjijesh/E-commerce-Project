@@ -7,51 +7,34 @@
 }
 .detail-button{
 
-        background-color: #4f9bff;
-        color: white;
-        font-size: 16px;
-        padding: 8px 15px;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
+    background-color: #4f9bff;
+    color: white;
+    font-size: 16px;
+    padding: 8px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
 
 }
 #header{
   font-weight: bolder;
 
 }
-
 </style>
-
-
 <div class="container">
-
-   <h5 id="header">Your Orders</h5>
-    <div class="table-responsive" >
-
+    <h5 id="header">Past Orders</h5>
   <table class="table">
   <thead style="color:brown; size: 20px">
-
-       <td><strong>ORDER ID</strong></td>
-      <td><strong>DATE</strong></td>
-
-      <td><strong>PAYMENT MODE</strong></td>
-      <td><strong>ORDER STATUS</strong></td>
-      <td><strong>TOTAL</strong></td>
-      <td><strong>ACTION</strong></td>
-
-
+    <td><strong>ORDER ID</strong></td>
+    <td><strong>DATE</strong></td>
+    <td><strong>PAYMENT MODE</strong></td>
+    <td><strong>ORDER STATUS</strong></td>
+    <td><strong>TOTAL</strong></td>
+    <td><strong>ACTION</strong></td>
     </thead>
-
-
-
- {{#each orderData}}
-
-    <tbody>
+ {{#each pastOrder}}
+<tbody>
     <tr>
-
-
-
        <td>{{this.orderId}}</td>
        <td>{{formatDate this.orderDate  "DD-MM-YYY"}}</td>
        <td>{{this.paymentMode}}</td>
@@ -62,20 +45,14 @@
        <a style="text-decoration: none;" class="detail-button" href="/order-details?id={{this._id}}">VIEW DETAILS</a>
 </td>
   </tbody>
-
   {{/each}}
-
-
-
-
 </table>
-
-  <nav aria-label="Page navigation example">
+ <nav aria-label="Page navigation example">
   <ul class="pagination">
 
       {{#for 1 pages 1}}
-    <li class="page-item"><a class="page-link" href="/view-order?page={{this}}">{{this}}</a></li>
-    
+    <li class="page-item"><a class="page-link" href="/past-orders?page={{this}}">{{this}}</a></li>
+    {{log this}}
       {{/for}}
 
 
@@ -83,11 +60,4 @@
 </nav>
 
 </div>
-
-<a class="btn btn-success mb-3" href="/past-orders">Past Orders</a>
-</div>
-
-
-
-
 {{>userfooter}}

@@ -48,6 +48,6 @@ router.post('/update-cart',userController.cartUpdation)
 router.put('/orders/:orderId/cancel',orderController.cancellOrder)
 router.put('/orders/:orderId/return',orderController.returnOrder)
 router.post('/coupon-apply',orderController.couponApply)
-
+router.get('/past-orders',auth.isLogin,orderController.pastOrder)
 
 module.exports = router;

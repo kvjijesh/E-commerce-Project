@@ -69,7 +69,10 @@ const options = {
   order_id:orderId,
   handler: function (response){
         alert(response.razorpay_payment_id);
+        if(response.razorpay_payment_id)
         window.location.href='/order-success'
+        else
+        window.location.href='/payments'
         },
 
   notes: {

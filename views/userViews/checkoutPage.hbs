@@ -109,7 +109,7 @@
           </div>
           <div id="coupon-error"></div>
 
-          <div>
+          {{!-- <div>
 
             <strong >Discount:</strong><p id="discount">0</p>
 
@@ -117,10 +117,26 @@
           <div>
             <strong>Grand Total:</strong>
             <p id="grandTotal">{{cartTotal}}</p>
-          </div>
+          </div> --}}
+
+     <table class="table">
+  <tr>
+    <td class="text-right"><strong>Subtotal:</strong></td>
+    <td class="text-right"><span id="cartTotal" class="cartTotal"><strong>{{cartTotal}}</strong></span></td>
+  </tr>
+  <tr>
+    <td class="text-right"><strong>Discount:</strong></td>
+    <td class="text-right"><p id="discount"><strong>0</strong></p></td>
+  </tr>
+  <tr>
+    <td class="text-right"><strong>Grand Total:</strong></td>
+    <td class="text-right"><p id="grandTotal"><strong>{{cartTotal}}</strong></p></td>
+  </tr>
+</table>
+
 
       </div>
-      <div class="col-md-7 col-lg-8 border border-2 border-secondary">
+<div class="col-md-7 col-lg-8 border border-2 border-secondary">
         <p class="m-3">Billing address</p>
         <a href="/add-address">+Add new address</address></a>
 
@@ -254,8 +270,8 @@ couponButton.addEventListener("click", async function(){
       document.getElementById("coupon-error").textContent = data.error;
     } else {
 
-      document.getElementById("grandTotal").innerHTML = data.cartTotal;
-      document.getElementById('discount').innerHTML=data.discount
+      document.getElementById("grandTotal").innerHTML = Number(data.cartTotal).toFixed(2);
+      document.getElementById('discount').innerHTML=Number(data.discount).toFixed(2);
     }
 
   } catch (error) {
