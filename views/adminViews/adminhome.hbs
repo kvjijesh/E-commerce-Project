@@ -56,12 +56,12 @@
       <div class="card " style="background-color: brown;">
         <div class="card-body" style="text-align: center;">
           <h2 class="card-title">Total Revenue</h3>
-            <h3 class="card-text">{{orders}}</h3>
+            <h3 class="card-text">{{totalRevenue}}</h3>
         </div>
       </div>
     </div>
   </div>
-  <div class="col-10 offset-2 my-3">
+  <div class="col-9 offset-2 my-3">
     <div class="card">
       <div class="card-body">
         <h5 style="text-align: center;">Sales Data</h5>
@@ -71,7 +71,7 @@
     </div>
   </div>
   <div class="raw d-flex">
-    <div class="col-4 offset-2 my-3">
+    <div class="col-3 offset-2 my-3">
       <div class="card">
         <div class="card-body">
           <h5 style="text-align: center;">Payment Data</h5>
@@ -82,7 +82,7 @@
         </div>
       </div>
     </div>
-    <div class="col-4 offset-2 my-3">
+    <div class="col-3 offset-2 my-3">
       <div class="card">
         <div class="card-body">
           <h5 style="text-align: center;">Category wise Sales</h5>
@@ -161,21 +161,23 @@
   });
 </script>
 <script>
-  const ctx3 = document.getElementById("myChart3");
+  const catOrderCounts = {{{ json categorysale}}};
 
+  console.log(catOrderCounts);
+  const catNames = catOrderCounts.map(order => order.category);
+  const catcounts = catOrderCounts.map(order => order.count);
+  const ctx3 = document.getElementById("myChart3");
+ console.log(catcounts,catNames)
   new Chart(ctx3, {
-    type: "doughnut",
+    type: "pie",
 
     data: {
-      labels: [
-        "Men",
-        "WOMEN",
-        "ACCESSERIES"
-
-      ],
+      labels:
+        catNames
+,
       datasets: [{
         label: 'Total Count',
-        data: [5, 8, 6],
+        data: catcounts,
         backgroundColor: [
           'rgb(255, 99, 132)',
           'rgb(54, 162, 235)',

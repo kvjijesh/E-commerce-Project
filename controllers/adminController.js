@@ -351,10 +351,68 @@ const homeload = async (req, res) => {
   const users = await User.find({}).count();
   const products = await Product.find({}).count();
   const orders = await Order.find({}).count();
-  const totalRevenue = await Order.find({ status: "delivered" });
-  const categories = await Category.find({}, '_id');
-  const categoryIds = categories.map(category => category._id);
-  console.log(categoryIds)
+  const allOrders = await Order.find({ status: "delivered" });
+  const totalRevenue = allOrders.reduce(
+    (total, order) => total + Number(order.orderBill),
+    0
+  );
+
+ //category sales
+ const categorysale=await   Order.aggregate([
+  {
+    $lookup: {
+      from: 'addresses', // Name of the collection you are joining with
+      localField: 'address',
+      foreignField: '_id',
+      as: 'address' // Name of the array field where the joined documents will be stored
+    }
+  },
+  {
+    $unwind: '$items' // Deconstruct the items array
+  },
+  {
+    $lookup: {
+      from: 'products', // Name of the collection you are joining with
+      localField: 'items.product',
+      foreignField: '_id',
+      as: 'product' // Name of the array field where the joined documents will be stored
+    }
+  },
+  {
+    $unwind: '$product' // Deconstruct the product array
+  },
+  {
+    $group: {
+      _id: '$product.category',
+      count: { $sum: 1 }
+    }
+  },
+  {
+    $lookup: {
+      from: 'categories', // Name of the collection you are joining with
+      localField: '_id',
+      foreignField: '_id',
+      as: 'category' // Name of the array field where the joined documents will be stored
+    }
+  },
+  {
+    $unwind: '$category' // Deconstruct the category array
+  },
+  {
+    $project: {
+      _id: 0,
+      category: '$category.name',
+      count: 1
+    }
+  }
+], (err, result) => {
+  if (err) {
+    console.log(err);
+  } else {
+    console.log(result);
+  }
+});
+
   const cashOnDeliveryCount = await Order.countDocuments({
     paymentMode: "cashondelivery",
   });
@@ -403,6 +461,7 @@ const homeload = async (req, res) => {
     products,
     orders,
     totalRevenue,
+    categorysale
   });
 };
 
