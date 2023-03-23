@@ -1,0 +1,99 @@
+{{>adminheader}}
+
+<style>
+    address {
+        background-color: #d2caca;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+        font-family: Arial, sans-serif;
+        font-size: 14px;
+        margin: 20px 0;
+        padding: 20px;
+    }
+
+    address h4 {
+        font-size: 16px;
+        font-weight: bold;
+        margin-bottom: 10px;
+    }
+
+    address p {
+        margin: 0;
+        padding: 0;
+    }
+
+    .detail {
+        background-color: #d2caca;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+        font-family: Arial, sans-serif;
+        font-size: 14px;
+        margin: 20px 0;
+        padding: 20px;
+    }
+
+    .full {
+        display: flex;
+    }
+
+    .left {}
+
+    .right {
+        margin-left: 50px;
+        margin-top: 25px;
+    }
+
+    .next {
+        margin-top: 50px;
+    }
+</style>
+<div class="container">
+    <div>
+        <address>
+            <h6 style="font-weight: bold;">DELIVERY ADDRESS</h6>
+            {{orderData.address.name}}<br>
+            {{orderData.address.address1}}<br>
+            {{orderData.address.city}}
+            <br>
+            {{orderData.address.state}} <br>
+            {{orderData.address.mobile}}
+        </address>
+    </div>
+    <div class="detail">
+        <div style="width:fit-content;" class="ml-auto">
+            <form action="/admin/change-status" method="post">
+                    <td>
+                        <select style="height: 38px;" id="status" name="status">
+                            <option value="" disabled selected>Choose an option</option>
+                            <option value="shipped">Shipped</option>
+                            <option value="delivered">Delivered</option>
+                            <option value="returned">Returned</option>
+                        </select>
+                    </td>
+                    <td>
+                        <input type="hidden" name="id" value="{{orderData._id}}">
+                        <button class="btn btn-primary" type="submit">Change Status</button>
+                    </td>
+ </form>
+
+        </div>
+        <div class="full">
+            <div class="left">
+                <h6>ITEMS</h6>
+                {{#each orderData.items}}
+                <img style="width: 100px;" src="/images/{{this.product.image.[0]}}" alt="{{this.product.name}}">
+                <br>
+                <p>{{this.product.name}}</p>
+                {{/each}}
+            </div>
+            <div class="right">
+                <strong>ORDER ID: {{orderData.orderId}}</strong><br>
+                <strong>ORDER DATE: {{orderData.orderDate}}</strong><br>
+                <strong>ORDER BILL: Rs.{{orderData.orderBill}}</strong><br>
+                <strong class="status" id="order-{{orderData._id}}-status">ORDER STATUS: {{orderData.status}}</strong>
+            </div>
+        </div>
+    </div>
+</div>

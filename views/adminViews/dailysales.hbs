@@ -1,0 +1,75 @@
+{{>adminheader}}
+{{#if dailyorders}}
+<a class="btn btn-secondary ml-3 mt-3"  href="/admin/dailysales/download">Xls</a>
+<button class="btn btn-success ml-3 mt-3" onclick="printPage()">Print</button>
+<div class="container mt-3">
+
+  <table class="table">
+  <thead>
+    <tr>
+
+      <th scope="col">Total Order</th>
+      <th scope="col"></th>
+      <th scope="col">Total Revenue</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+
+      <td>{{dailyorders.length}}</td>
+      <td></td>
+      <td>{{totalOrderBill}}</td>
+    </tr>
+
+  </tbody>
+</table>
+
+
+    <table class="table">
+        <thead class="thead-dark">
+
+            <tr>
+                <th scope="col">ORDER ID</th>
+                <th scope="col">DELIVERY NAME</th>
+
+                <th scope="col">ORDER DATE</th>
+                <th scope="col">DISCOUNT</th>
+                <th scope="col">TOTAL BILL</th>
+
+            </tr>
+
+        </thead>
+
+        <tbody>
+
+        {{#each dailyorders}}
+            <tr>
+
+                <td>{{this.orderId}}</td>
+                <td>{{this.address.name}}</td>
+                <td>{{this.orderDate}}</td>
+                <td>{{this.discount}}</td>
+                <td>{{this.orderBill}}</td>
+
+
+            </tr>
+                  {{/each}}
+
+
+
+        </tbody>
+
+
+    </table>
+</div>
+{{else}}
+<div class="container p-5">
+    <h2>Nothing Here</h2>
+</div>
+{{/if}}
+<script>
+    function printPage() {
+  window.print();
+}
+
+</script>

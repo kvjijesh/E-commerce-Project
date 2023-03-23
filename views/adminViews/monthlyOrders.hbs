@@ -1,0 +1,79 @@
+{{>adminheader}}
+{{#if monthlyOrders}}
+<div>
+<a class="btn btn-secondary ml-3 mt-3" href="/admin/monthlysales/download">Download xlsx</a>
+<button class="btn btn-success ml-3 mt-3" onclick="printPage()">Print</button>
+</div>
+
+<div class="container mt-3">
+
+    <table class="table">
+        <thead>
+            <tr>
+
+                <th scope="col">Total Order</th>
+                <th scope="col"></th>
+                <th scope="col">Total Revenue</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+
+                <td>{{monthlyOrders.length}}</td>
+                <td></td>
+                <td>{{totalMonthlyBill}}</td>
+            </tr>
+
+        </tbody>
+    </table>
+
+
+    <table class="table">
+        <thead class="thead-dark">
+
+            <tr>
+                <th scope="col">ORDER ID</th>
+
+
+                <th scope="col">ORDER DATE</th>
+                <th scope="col">DISCOUNT</th>
+                <th scope="col">TOTAL BILL</th>
+
+            </tr>
+
+        </thead>
+
+        <tbody>
+
+            {{#each monthlyOrders}}
+            <tr>
+
+                <td>{{this.orderId}}</td>
+
+                <td>{{this.orderDate}}</td>
+                <td>{{this.discount}}</td>
+                <td>{{this.orderBill}}</td>
+
+
+            </tr>
+            {{/each}}
+
+
+
+        </tbody>
+    </table>
+</div>
+ {{else}}
+ <div class="container p-5">
+    <div>
+        <h2>Nothing Here..</h2>
+    </div>
+{{/if}}
+ </div>
+
+<script>
+    function printPage() {
+  window.print();
+}
+
+</script>

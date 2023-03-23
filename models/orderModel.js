@@ -21,14 +21,17 @@ const orderSchema=new mongoose.Schema({
     orderBill : {
         type : String
     },
+    discount : {
+        type : String
+    },
     status: {
         type: String,
         enum: ['ordered', 'confirmed', 'shipped', 'delivered', 'cancelled', 'refunded', 'returned'],
         default: 'ordered'
       },
     orderDate : {
-        type : Date,
-        default: Date()
+        type : String,
+
     },
     orderId:{
         type:String

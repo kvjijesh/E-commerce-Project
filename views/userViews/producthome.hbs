@@ -1,37 +1,44 @@
 {{>userheader}}
 
 <style>
-	.form-label {
-  font-weight: bold;
-}
-
-.form-select {
-
-  width: 50%;
-}
-
-.btn-secondary {
-  width: 50%;
-}
-
-@media only screen and (max-width: 767px) {
-  .col-md-3 {
-    margin-bottom: 20px;
+  .form-label {
+    font-weight: bold;
   }
-}
 
-@media only screen and (min-width: 768px) {
-  .col-md-3 {
-    order: -1;
+  .form-select {
 
+    width: 50%;
   }
-}
 
+  .btn-secondary {
+    width: 50%;
+  }
+
+  @media only screen and (max-width: 767px) {
+    .col-md-3 {
+      margin-bottom: 20px;
+    }
+  }
+
+  @media only screen and (min-width: 768px) {
+    .col-md-3 {
+      order: -1;
+
+    }
+  }
 </style>
 
-<div class="container-fluid">
-  <div class="row">
-    <div class="col-md-3">
+<div class="container">
+  <div class="d-flex justify-content-center w-auto">
+  <form class="form-inline" id="search-form">
+    <input id="search-input" class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+    <button  class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+  </form>
+  </div>
+</div>
+<div class="container-fluid"></div>
+  <div class="row pt-5 mb-3">
+    <div class="col-md-2">
       <form>
         <div class="mb-3">
           <label for="category" class="form-label">Category:</label>
@@ -53,16 +60,17 @@
         <button type="submit" class="btn btn-secondary mt-4">Filter</button>
       </form>
     </div>
-
-    <div class="col-md-9">
-<div class="row">
+{{!-- product list --}}
+    <div class="col-md-9" id="products-container">
+      <div class="row">
         {{#each products}}
         {{#if (or (not ../category) (eq ../category this.category))}}
         <div class="col-md-4">
           <div class="block2" style="width: 300px; height:500px">
             <div class="block2-pic hov-img0">
               <img class="image-fluid" src="/images/{{this.image.[0]}}" alt="IMG-PRODUCT">
-              <a href="/product-detail?id={{this._id}}" class="block2-btn flex-c-m stext-103 cl2 size-102 bg0 bor2 hov-btn1 p-lr-15 trans-04 ">
+              <a href="/product-detail?id={{this._id}}"
+                class="block2-btn flex-c-m stext-103 cl2 size-102 bg0 bor2 hov-btn1 p-lr-15 trans-04 ">
                 View Details
               </a>
             </div>
@@ -90,11 +98,68 @@
         {{/if}}
         {{/each}}
       </div>
-   
+
     </div>
   </div>
-
-
-
 </div>
+
+<script>
+const searchForm = document.querySelector('#search-form');
+const searchInput = document.querySelector('#search-input');
+
+searchForm.addEventListener('submit',(event)=>{
+event.preventDefault()
+const search=searchInput.value
+fetch(`/search?q=${search}`)
+    .then((response) => response.json())
+    .then((results) => {
+  const productsContainer = document.getElementById('products-container');
+  productsContainer.innerHTML = '';
+  const row = document.createElement('div');
+  row.classList.add('row');
+  productsContainer.appendChild(row);
+  results.forEach((product) => {
+    const productElement = document.createElement('div');
+    productElement.classList.add('col-md-4', 'mb-4');
+    productElement.innerHTML = `
+      <div class="block2" style="width: 300px; height:500px">
+        <div class="block2-pic hov-img0">
+          <img class="image-fluid" src="/images/${product.image[0]}" alt="IMG-PRODUCT">
+          <a href="/product-detail?id=${product._id}"
+            class="block2-btn flex-c-m stext-103 cl2 size-102 bg0 bor2 hov-btn1 p-lr-15 trans-04 ">
+            View Details
+          </a>
+        </div>
+
+        <div class="block2-txt flex-w flex-t p-t-14">
+          <div class="block2-txt-child1 flex-col-l ">
+            <a href="/product-detail?id=${product._id}" class="stext-104 cl4 hov-cl1 trans-04 js-name-b2 p-b-6">
+              ${product.name}
+            </a>
+
+            <span class="stext-105 cl3">
+              Rs.${product.price}
+            </span>
+          </div>
+
+          <div class="block2-txt-child2 flex-r p-t-3">
+            <a href="#" class="btn-addwish-b2 dis-block pos-relative js-addwish-b2">
+              <img class="icon-heart1 dis-block trans-04" src="images/icons/icon-heart-01.png" alt="ICON">
+              <img class="icon-heart2 dis-block trans-04 ab-t-l" src="images/icons/icon-heart-02.png" alt="ICON">
+            </a>
+          </div>
+        </div>
+      </div>
+    `;
+    // add the product element to the row
+    row.appendChild(productElement);
+  });
+});
+
+
+})
+
+</script>
+
+
 {{>userfooter}}

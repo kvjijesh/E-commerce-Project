@@ -11,7 +11,7 @@
     <div>
       <h3>Hello {{userData.name}}</h3>
 
-      <h5 id="total">Your Bill Amount is:Rs.{{cartTotal}}</h5>
+      <h5 id="total">Your Bill Amount is:Rs.{{order.orderBill}}</h5>
       </div>
           {{!-- <input type="number" id="total" name="total" value="{{cartTotal}}" hidden> --}}
       <button  class="btn-success"id="rzp-button1" style="padding: 5px;">PAY NOW</button>
@@ -36,10 +36,12 @@
 
 
 <script>
-  const billAmount = document.getElementById("total").innerHTML;
-const cartTotal = billAmount.split("Rs.")[1];
 
+const billAmount = document.getElementById("total").innerHTML;
+const cartTotal = billAmount.split("Rs.")[1];
+console.log(cartTotal)
 const submitButton = document.getElementById('rzp-button1');
+
 // Create Order
 let orderId
 fetch('/payments/create-order', {
@@ -91,9 +93,5 @@ submitButton.addEventListener('click', function (e) {
   e.preventDefault();
 });
 </script>
-
-
-
-
 
   {{>userfooter}}

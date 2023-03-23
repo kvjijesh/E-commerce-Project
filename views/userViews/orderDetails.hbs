@@ -1,130 +1,173 @@
 {{>userheader}}
 <style>
-
     address {
-    background-color: #d2caca;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
-    font-family: Arial, sans-serif;
-    font-size: 14px;
-    margin: 20px 0;
-    padding: 20px;
+        background-color: #d2caca;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+        font-family: Arial, sans-serif;
+        font-size: 14px;
+        margin: 20px 0;
+        padding: 20px;
+    }
 
-}
+    address h4 {
+        font-size: 16px;
+        font-weight: bold;
+        margin-bottom: 10px;
+    }
 
-address h4 {
-    font-size: 16px;
-    font-weight: bold;
-    margin-bottom: 10px;
-}
+    address p {
+        margin: 0;
+        padding: 0;
+    }
 
-address p {
-    margin: 0;
-    padding: 0;
-}
-   .detail {
+    .detail {
+        background-color: #d2caca;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+        font-family: Arial, sans-serif;
+        font-size: 14px;
+        margin: 20px 0;
+        padding: 20px;
+    }
 
+    .full {
+        display: flex;
+    }
 
-    background-color: #d2caca;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
-    font-family: Arial, sans-serif;
-    font-size: 14px;
-    margin: 20px 0;
-    padding: 20px;
-}
+    .left {}
 
-.full{
-    display: flex;
-}
-.left{
+    .right {
+        margin-left: 50px;
+        margin-top: 25px;
+    }
 
-}
-.right{
-    margin-left: 15px;
-    margin-top: 50px;
-}
-.next{
-    margin-top: 50px;
-}
-
-
+    .next {
+        margin-top: 50px;
+    }
 </style>
 <div class="container">
-<div>
-
-<address>
-    <h6>DELIVERY ADDRESS</h6>
-    {{orderData.address.name}}<br>
-    {{orderData.address.address1}}<br>
-    {{orderData.address.city}}
-    <br>
-    {{orderData.address.state}} <br>
-    {{orderData.address.mobile}}
-</address>
-</div>
-
-
-<div class="detail">
-
-
-
-<div class="full">
-    <div class="left">
-                    <h6>ITEMS</h6>
-                    {{#each orderData.items}}
+    <div>
+        <address>
+            <h6 style="font-weight: bold;">DELIVERY ADDRESS</h6>
+            {{orderData.address.name}}<br>
+            {{orderData.address.address1}}<br>
+            {{orderData.address.city}}
+            <br>
+            {{orderData.address.state}} <br>
+            {{orderData.address.mobile}}
+        </address>
+    </div>
+    <div class="detail">
+        <div style="width:fit-content;" class="ml-auto">
+            {{#if (or (eq orderData.status "ordered") (eq orderData.status "shipped"))}}
+            <button id="cancellbutton" class="btn btn-danger mx-2" onclick="cancelOrder('{{orderData._id}}')">Cancel
+                Order</button>
+            {{/if}}
+            {{#if (eq orderData.status "delivered")}}
+            <button id="returnbutton" class="btn btn-success mx-2" onclick="returnOrder('{{orderData._id}}')">Return
+                Order</button>
+            {{/if}}
+            <button class="btn btn-secondary" onclick="invoice('{{orderData._id}}')">INVOICE</button>
+        </div>
+        <div class="full">
+            <div class="left">
+                <h6>ITEMS</h6>
+                {{#each orderData.items}}
                 <img style="width: 100px;" src="/images/{{this.product.image.[0]}}" alt="{{this.product.name}}">
                 <br>
                 <p>{{this.product.name}}</p>
                 {{/each}}
+            </div>
+            <div class="right">
+                <strong>ORDER ID: {{orderData.orderId}}</strong><br>
+                <strong>ORDER DATE: {{orderData.orderDate}}</strong><br>
+                <strong>ORDER BILL: Rs.{{orderData.orderBill}}</strong><br>
+                <strong class="status" id="order-{{orderData._id}}-status">ORDER STATUS: {{orderData.status}}</strong>
+            </div>
+        </div>
     </div>
-    <div class="right">
-                    <p>ORDER ID: {{orderData.orderId}}</p>
-                    <p>ORDER DATE: {{formatDate orderData.orderDate  "DD-MM-YYY"}}</p>
-                    <p class="status" id="order-{{orderData._id}}-status">ORDER STATUS: {{orderData.status}}</p>
-    </div>
-    <div class="next">
-        {{log orderData}}
-{{#if (or (eq orderData.status "ordered") (eq orderData.status "shipped"))}}
-   <button class="btn btn-danger mx-5" onclick="cancelOrder('{{orderData._id}}')">Cancel Order</button>
-{{/if}}
-
-
-    {{#if (eq orderData.status "delivered")}}
-       <button class="btn btn-success mx-5" onclick="returnOrder('{{orderData._id}}')">Return Order</button>
-    {{/if}}
-
-
-
-
-    </div>
-
 </div>
-
-</div>
-
-</div>
-
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 <script>
-  function cancelOrder(orderId) {
-  fetch(`/orders/${orderId}/cancel`, { method: 'PUT' })
-    .then(response => response.json())
-    .then(updatedOrder => {
-     console.log(updatedOrder)
-     document.querySelector(`#order-${orderId}.status`).textContent =updatedOrder.status;
-    });
-}
 
-function returnOrder(orderId) {
-  fetch(`/orders/${orderId}/return`, { method: 'PUT' })
-    .then(response => response.json())
-    .then(updatedOrder => {
-      // Update the UI to reflect the new order status
-      document.querySelector(`#order-${orderId} .status`).textContent = updatedOrder.status;
-    });
-}
+    function cancelOrder(orderId) {
+        swal({
+            title: "Are you sure to cancel?",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true,
+        })
+            .then((willDelete) => {
+                if (willDelete) {
+                    fetch(`/orders/${orderId}/cancel`, { method: 'PUT' })
+                        .then(response => response.json())
+                        .then(updatedOrder => {
+                            swal("Your order cancelled", {
+                                icon: "success",
+                            });
+                            document.getElementById(`order-${orderId}-status`).innerHTML = "ORDER STATUS:" + `${updatedOrder.status}`
+                            document.getElementById('cancellbutton').style.display = 'none'
+                        });
+                } else {
+                    swal("Your cancel aborted");
+                }
+            });
+    }
+
+    const returnOrder = async (orderId) => {
+        swal({
+            title: "Are you sure to return?",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true,
+        }).then((willDelete) => {
+            if (willDelete) {
+                fetch(`/orders/${orderId}/return`, { method: 'PUT' })
+                    .then(response => response.json())
+                    .then(updatedOrder => {
+                        swal("Your return order placed!", {
+                            icon: "success",
+                        });
+                        document.getElementById(`order-${orderId}-status`).innerHTML = "ORDER STATUS:" + `${updatedOrder.status}`
+                        document.getElementById('returnbutton').style.display = 'none'
+                    });
+            } else {
+                swal("Your return cancelled !");
+            }
+        });
+    };
+
+
+
+
+    const invoice = async (orderId) => {
+        try {
+
+            const response = await fetch(`/invoice/${orderId}`);
+            if (response.ok == true)
+                swal("Good job!", "You Invoice is ready!", "success");
+            else
+                swal("Oops!", "You Invoice failed!", "error");
+
+            /* console.log(response)
+             const blob =await response.blob();
+             const url = URL.createObjectURL(blob);
+             const link = document.createElement('a');
+             link.href = url;
+             link.download =  `invoice-${orderId}.pdf`;
+             link.click();*/
+
+
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
+
+
 
 </script>
 

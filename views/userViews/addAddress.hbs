@@ -1,76 +1,147 @@
-
 {{>userheader}}
-   <style>
+<style>
+  .container1 {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 120vh;
 
-.container1 {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        height: 120vh;
+  }
 
-      }
+  .form1 {
+    width: 50%;
+    padding: 2em;
+    background-color: #f7f7f7;
+    border-radius: 10px;
+    box-shadow: 2px 2px 10px #ccc;
 
-      .form1 {
-        width: 50%;
-        padding: 2em;
-        background-color: #f7f7f7;
-        border-radius: 10px;
-        box-shadow: 2px 2px 10px #ccc;
+  }
 
-      }
+  .form-group {
+    margin-bottom: 1em;
+  }
 
-      .form-group {
-        margin-bottom: 1em;
-      }
+  label {
+    font-weight: 600;
+  }
 
-      label {
-        font-weight: 600;
-      }
-
-      .btn-primary {
-        width: 100%;
-        margin-top: 1em;
-      }
-    </style>
+  .btn-primary {
+    width: 100%;
+    margin-top: 1em;
+  }
+</style>
 
 
-    <div class="container container1 mt-5">
-      <h2 class="text-center">Add adress</h2>
-      <form  class="form1" action="" method="post">
-        <div class="form-group">
-          <label for="name">Name</label>
-          <input type="text" class="form-control" id="name" name="name">
-        </div>
-        <div class="form-group">
-          <label for="mobile">Mobile</label>
-          <input type="text" class="form-control" id="mobile" name="mobile">
-        </div>
 
-        <div class="form-group">
-          <label for="address1">House number,Street</label>
-          <input type="text" class="form-control" id="address1" name="address1">
-        </div>
-        <div class="form-group">
-          <label for="address2">Area, Village</label>
-          <input type="text" class="form-control" id="address2" name="address2">
-        </div>
-        <div class="form-group">
-          <label for="city">city</label>
-          <input type="text" class="form-control" id="city" name="city">
-        </div>
-        <div class="form-group">
-          <label for="state">State</label>
-          <input type="text" class="form-control" id="state" name="state">
-        </div>
-        <div class="form-group">
-          <label for="pin">Pincode</label>
-          <input type="number" class="form-control" id="zip" name="zip">
-        </div>
-        <button type="submit" class="btn btn-primary">Add </button>
-      </form>
+<div class="container container1 mt-5">
+  <h2 class="text-center">Add adress</h2>
+  <form class="form1" action="" method="post">
+    <div class="form-group">
+      <label for="name">Name</label>
+      <input type="text" class="form-control" id="name" name="name">
+    </div>
+    <div class="form-group">
+      <label for="mobile">Mobile</label>
+      <input type="text" class="form-control" id="mobile" name="mobile">
+    </div>
 
-        <button class="btn btn-success"><a class="text-dark" href="/profile">Cancel</a></button>
+    <div class="form-group">
+      <label for="address1">House number,Street</label>
+      <input type="text" class="form-control" id="address1" name="address1">
+    </div>
+    <div class="form-group">
+      <label for="address2">Area, Village</label>
+      <input type="text" class="form-control" id="address2" name="address2">
+    </div>
+    <div class="form-group">
+      <label for="city">city</label>
+      <input type="text" class="form-control" id="city" name="city">
+    </div>
+    <div class="form-group">
+      <label for="state">State</label>
+      <input type="text" class="form-control" id="state" name="state">
+    </div>
+    <div class="form-group">
+      <label for="pin">Pincode</label>
+      <input type="number" class="form-control" id="zip" name="zip">
+    </div>
+    <button type="submit" class="btn btn-primary">Add </button>
+  </form>
+
+  <button class="btn btn-success"><a class="text-dark" href="/profile">Cancel</a></button>
 </div>
 
-  {{>userfooter}}
+<script>
+
+
+  const form = document.querySelector('form');
+  const nameInput = document.querySelector('#name');
+  const mobileInput = document.querySelector('#mobile');
+  const address1Input = document.querySelector('#address1');
+  const address2Input = document.querySelector('#address2');
+  const cityInput = document.querySelector('#city');
+  const stateInput = document.querySelector('#state');
+  const zipInput = document.querySelector('#zip');
+  console.log(cityInput, stateInput, zipInput,)
+
+  form.addEventListener('submit', (event) => {
+    event.preventDefault();
+
+
+
+
+    if (nameInput.value.trim() === '') {
+      alert('Please enter a name.');
+      nameInput.focus();
+      return false;
+    }
+
+    if (mobileInput.value.trim() === '') {
+      alert('Please enter a mobile number.');
+      mobileInput.focus();
+      return false;
+    }
+
+    if (address1Input.value.trim() === '') {
+      alert('Please enter an address.');
+      address1Input.focus();
+      return false;
+    }
+
+    if (address2Input.value.trim() === '') {
+      alert('Please enter an area or village name.');
+      address2Input.focus();
+      return false;
+    }
+
+    if (cityInput.value.trim() === '') {
+      alert('Please enter a city.');
+      cityInput.focus();
+      return false;
+    }
+
+    if (stateInput.value.trim() === '') {
+      alert('Please enter a state.');
+      stateInput.focus();
+      return false;
+    }
+
+    if (zipInput.value.trim() === '') {
+      alert('Please enter a pincode.');
+      zipInput.focus();
+      return false;
+    }
+
+    if (!/^\d{6}$/.test(zipInput.value.trim())) {
+      alert('Please enter a valid pincode.');
+      zipInput.focus();
+      return false;
+    }
+
+    form.submit();
+  });
+</script>
+
+
+{{>userfooter}}

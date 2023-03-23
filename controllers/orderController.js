@@ -6,10 +6,14 @@ const { use } = require("../routes/users");
 const Razorpay = require("razorpay");
 const crypto = require("crypto");
 const Coupon = require("../models/couponModel");
+const pdfkit = require("pdfkit");
+const fs = require("fs");
+const moment = require('moment')
+
 
 const instance = new Razorpay({
-  key_id: "rzp_test_Crtfv9xGM7cd2j",
-  key_secret: "KkAXvkunE3WzLphvq5OJ6cHE",
+  key_id: process.env.KEY_ID,
+  key_secret: process.env.KEY_SECRET,
 });
 
 function generateOrderId() {
@@ -18,6 +22,7 @@ function generateOrderId() {
 }
 
 const hbs = require("hbs");
+const { findById } = require("../models/userModel");
 
 hbs.registerHelper("eq", function (a, b) {
   return a === b;
@@ -50,6 +55,9 @@ const checkoutPage = async (req, res) => {
     const user = await User.findOne({ _id: userId }).populate("cart.product");
 
     const cart = user.cart;
+    if (cart.length < 1) {
+      res.redirect('/product')
+    }
 
     const address = await Address.find({ owner: userId });
 
@@ -76,15 +84,14 @@ const checkoutPage = async (req, res) => {
 
 const orderSummary = async (req, res) => {
   try {
-    const orderData = req.body;
-    const address = req.body.address;
-    console.log(orderData);
-    const cartTotal = req.body.cartTotal;
-    const paymentMode = req.body.paymentMethod;
+
+    const { address, cartTotal, paymentMode, discount } = req.body
+    const orderDate = new Date();
+    const formattedDate = moment(orderDate).format('DD-MM-YYYY');
+    console.log(formattedDate,'daaaaaaaaaaaaaaaaa pattiiiiiiiiii')
     const userData = req.session.user;
     const userId = req.session.user._id;
     const user = await User.findById(userId).populate("cart.product");
-    console.log(user);
 
     const cartItems = user.cart.map((item) => {
       return {
@@ -100,8 +107,10 @@ const orderSummary = async (req, res) => {
           owner: userData._id,
           address: address,
           items: cartItems,
-          paymentMode: req.body.paymentMethod,
+          paymentMode: paymentMode,
           orderBill: cartTotal,
+          discount: discount,
+          orderDate:formattedDate,
           orderId: orderId,
         });
         await order.save();
@@ -116,9 +125,6 @@ const orderSummary = async (req, res) => {
         user.cart = [];
         const newuserData = await user.save();
         req.session.user = newuserData;
-        // console.log(user);
-
-        // res.render("userViews/orderSummary",{userData:req.session.user});
         res.json(order);
       } else {
         res.redirect("/product");
@@ -132,6 +138,8 @@ const orderSummary = async (req, res) => {
           items: cartItems,
           paymentMode: req.body.paymentMethod,
           orderBill: req.body.cartTotal,
+          discount: discount,
+          orderDate:formattedDate,
           orderId: orderId,
         });
         await order.save();
@@ -143,14 +151,14 @@ const orderSummary = async (req, res) => {
           await product.save();
         }
 
-        user.cart = [];
-        const newuserData= await user.save();
-        req.session.user=newuserData
+        //user.cart = [];
+        //const newuserData = await user.save();
+        //req.session.user = newuserData;
 
         //res.redirect('/payments')
         res.json(order);
 
-        // res.render('userViews/paymentPage',{userData:req.session.user,cartTotal:cartTotal})
+
       } else {
         res.redirect("/product");
       }
@@ -194,27 +202,28 @@ const viewOrders = async (req, res) => {
 };
 
 const paymentLoad = async (req, res) => {
-  const userData = req.session.user;
-  // const orderData= await Order.findOne({owner:userData._id}).populate("items.product").populate("address")
+  try {
 
-  const userId = req.session.user._id;
-  const user = await User.findOne({ _id: userId }).populate("cart.product");
-  const cart = user.cart;
-  let cartTotal = 0;
-  cart.forEach((item) => {
-    const product = item.product;
-    const quantity = item.quantity;
-    const total = product.price * quantity;
-    item.total = total;
-    cartTotal += total;
-  });
 
-  res.render("userViews/paymentPage", { cartTotal, userData: userData });
-};
+    const userData = req.session.user;
+    // const orderData= await Order.findOne({owner:userData._id}).populate("items.product").populate("address")
+
+    const userId = req.session.user._id;
+    const user = await User.findOne({ _id: userId }).populate("cart.product");
+    const order = await Order.findOne({ owner: userId }).sort({ createdAt: -1 })
+
+
+    res.render("userViews/paymentPage", { userData: userData, order });
+  } catch (error) {
+    console.log(error.message)
+
+  }
+}
 
 const payment = async (req, res) => {
   console.log(req.body);
   const { amount, currency } = req.body;
+  console.log(amount, currency)
   var options = {
     amount: amount * 100, // amount in the smallest currency unit
     currency: currency,
@@ -246,8 +255,8 @@ const verifyPayment = async (req, res) => {
 };
 
 const orderSuccess = async (req, res) => {
-  const userData=req.session.user
-  res.render("userViews/orderSummary",{userData});
+  const userData = req.session.user;
+  res.render("userViews/orderSummary", { userData });
 };
 const orderDetails = async (req, res) => {
   const userData = req.session.user;
@@ -265,14 +274,14 @@ const orderDetails = async (req, res) => {
 const cancellOrder = async (req, res) => {
   try {
     const orderId = req.params.orderId;
-    console.log(orderId, "hiiiii");
+
 
     const updatedOrder = await Order.findByIdAndUpdate(
       orderId,
       { status: "cancelled" },
       { new: true }
     );
-    console.log(updatedOrder);
+
     res.json(updatedOrder);
   } catch (error) {
     console.error(error);
@@ -316,7 +325,7 @@ const couponApply = async (req, res) => {
 
     if (cartTotal > 499) {
       const discount = cartTotal * (couponDiscount / 100);
-      const data = cartTotal - discount;
+      const data = Math.floor(cartTotal - discount);
       console.log(data);
 
       coupon.usedby.push(userData._id);
@@ -362,6 +371,74 @@ const pastOrder = async (req, res) => {
   }
 };
 
+
+const invoicedown = async (req, res) => {
+  try {
+    const orderId = req.params.orderId;
+    const userData = req.session.user
+    const user = await User.findOne({ _id: userData._id })
+    console.log(user)
+
+    // Retrieve invoice data
+    const order = await Order.findById(orderId)
+      .populate("items.product")
+      .populate("address");
+
+    // Create PDF document
+    const doc = new pdfkit();
+
+    // Add invoice header
+    doc.text(`Invoice for order #${order.orderId}`);
+
+    // Add order details
+    doc.text(`Order Date: ${order.createdAt}`);
+    doc.text(`Name: ${user.name}`);
+
+    doc.text(`Shipping Address: ${order.address.address1}, ${order.address.city}, ${order.address.state}`);
+    doc.moveDown();
+
+    // Add item table
+    doc.text("Product", 50, 200).text("Quantity", 250, 200).text("Price", 350, 200).text("Total", 450, 200);
+    doc.moveTo(50, 220).lineTo(550, 220).stroke(); // horizontal line
+
+    let y = 240; // starting y-coordinate for the first row
+    let total = 0;
+    order.items.forEach((item) => {
+      const product = item.product;
+      const itemName = product.name;
+      const itemQuantity = item.quantity;
+      const itemPrice = `Rs.${product.price}`;
+      const itemTotal = `Rs.${(item.quantity * product.price)}`;
+
+      doc.text(itemName, 50, y).text(itemQuantity, 250, y).text(itemPrice, 350, y).text(itemTotal, 450, y);
+
+      y += 20; // increment y-coordinate for the next row
+      total += item.quantity * product.price;
+    });
+
+    doc.moveTo(50, y).lineTo(550, y).stroke(); // horizontal line
+    doc.text(`Discount Rs.${order.discount}`, 400, y + 20);
+    doc.moveTo(50, y).lineTo(550, y).stroke(); // horizontal line
+    doc.text(`Grand Total Rs.${(order.orderBill)}`, 385, y + 40);
+
+    // Save PDF to file
+    const filename = `invoice-${order.orderId}.pdf`;
+    const filepath = `/Users/jijesh/Downloads/${filename}`;
+
+    doc.pipe(fs.createWriteStream(filepath));
+    doc.end();
+
+    // Download PDF
+    res.download(filepath, filename);
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Internal server error");
+  }
+};
+
+
+
 //exprts
 module.exports = {
   checkoutPage,
@@ -376,4 +453,5 @@ module.exports = {
   returnOrder,
   couponApply,
   pastOrder,
+  invoicedown,
 };

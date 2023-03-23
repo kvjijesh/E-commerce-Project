@@ -1,137 +1,188 @@
 {{>adminheader}}
 
-<style>
-    body {
-        height: 100%;
-        margin: 0;
-        background: linear-gradient(45deg, #49a09d, #5f2c82);
-        font-family: sans-serif;
-        font-weight: 100;
-    }
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container">
+        {{!-- <a class="navbar-brand" href="#">Navbar</a> --}}
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item p-3">
+                    <button onclick="shipped()" style="border:none">SHIPPED</button>
+                </li>
+                <li class="nav-item p-3">
+                    <button onclick="delivered()" style="border:none">DELIVERED</button>
+                </li>
 
-    .container {
-        position: relative;
-        padding-top: 50px;
-       padding-left: 50px;
-       padding-right: 50px;
-        max-width: 100%;
-        overflow-x: auto;
-    }
-
-    table {
-        width: 100%;
-        border-collapse: collapse;
-        overflow: hidden;
-        box-shadow: 0 0 20px rgba(0,0,0,0.1);
-    }
-
-    th,
-    td {
-        padding: 15px;
-        background-color: rgba(255,255,255,0.2);
-        color: #fff;
-    }
-
-    th {
-        text-align: left;
-    }
-
-    thead {
-        th {
-            background-color: #55608f;
-        }
-    }
-
-    tbody {
-        tr {
-            &:hover {
-                background-color: rgba(255,255,255,0.3);
-            }
-        }
-        td {
-            position: relative;
-            &:hover {
-                &:before {
-                    content: "";
-                    position: absolute;
-                    left: 0;
-                    right: 0;
-                    top: -9999px;
-                    bottom: -9999px;
-                    background-color: rgba(255,255,255,0.2);
-                    z-index: -1;
-                }
-            }
-        }
-    }
-
-    /* Media Queries */
-    @media only screen and (max-width: 768px) {
-        /* Adjust the padding and font-size for smaller screens */
-        .container {
-            padding-top: 30px;
-        }
-        th,
-        td {
-            padding: 10px;
-            font-size: 12px;
-        }
-    }
-</style>
+                <li class="nav-item p-3">
+                    <button  onclick="returned()" style="border:none">RETURNED</button>
+                </li>
+            </ul>
+            <form class="d-flex ml-auto">
+                <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+                <button class="btn btn-outline-success" type="submit">Search</button>
+            </form>
+        </div>
+    </div>
+</nav>
 
 
-<div class="container">
-	<table>
-		<thead>
-			<tr>
-				<th>IMAGE</th>
-				<th>ITEM</th>
-				<th>ORDER DATE</th>
-				<th>ADDRESS</th>
-				<th>PAYMENT MODE</th>
-				<th>ORDER STATUS</th>
-				<th>TOTAL</th>
-				<th>OPTION</th>
-				<th>ACTION</th>
-
-			</tr>
-		</thead>
-		 {{#each orderData}}
-    {{#each this.items}}
-    <tbody>
-    <tr>
-
-      <td><img style="width: 80px;" src="/images/{{this.product.image.[0]}}" alt="data"></td>
-      <td>{{this.product.name}}</td>
-       <td>{{formatDate  ../orderDate 'DD-MM-YYYY'}}</td>
-       <td>{{../address.name}},{{../address.address1}}</td>
-
-       <td>{{../paymentMode}}</td>
-       <td>{{../status}}</td>
-
-       <td>{{../orderBill}}</td>
-       <form action="/admin/change-status" method="post">
-       <td>
-
-    <select id="status" name="status">
-  <option value="" disabled selected>Choose an option</option>
-
-  <option value="shipped">Shipped</option>
-   <option value="delivered">Delivered</option>
-  <option value="returned">Returned</option>
-
-</select>
 
 
-</td>
-<td>
-    <input type="hidden" name="id" value="{{../_id}}">
-    <button class="btn btn-primary" type="submit" >Change Status</button>
-</td></form>
+<div class="container w-100 mt-5  table-responsive  ">
+    <table id="order-table" class="table table-striped table-bordered table-hover">
 
-  </tbody>
-    {{/each}}
-  {{/each}}
-	</table>
+        <thead class="thead-dark">
+            <tr>
+                <th>ORDER DATE</th>
+                <th>ORDER ID</th>
+                <th>PAYMENT MODE</th>
+                <th>ORDER STATUS</th>
+                <th>TOTAL</th>
+                <th>ACTION</th>
 
+            </tr>
+        </thead>
+        {{#each orderData}}
+
+        <tbody>
+            <tr>
+                <td>{{this.orderDate}}</td>
+                <td>{{this.orderId}}</td>
+                <td>{{this.paymentMode}}</td>
+                <td>{{this.status}}</td>
+                <td>{{this.orderBill}}</td>
+                <td>
+                    <a class="btn btn-success" href="/admin/order-details?id={{this._id}}">DETAILS</a>
+                </td>
+        </tbody>
+
+        {{/each}}
+    </table>
 </div>
+
+
+<script>
+    function shipped() {
+        fetch('/admin/shipped')
+            .then(response => response.json())
+            .then(data => {
+
+                const orderTable = document.getElementById('order-table');
+                orderTable.innerHTML = `
+        <thead class="thead-dark">
+          <tr>
+            <th>ORDER DATE</th>
+            <th>ORDER ID</th>
+            <th>PAYMENT MODE</th>
+            <th>ORDER STATUS</th>
+            <th>TOTAL</th>
+            <th>ACTION</th>
+          </tr>
+        </thead>
+        <tbody>
+      `;
+                data.forEach(order => {
+                    const row = `
+          <tr>
+            <td>${(order.orderDate)}</td>
+            <td>${order.orderId}</td>
+            <td>${order.paymentMode}</td>
+            <td>${order.status}</td>
+            <td>${order.orderBill}</td>
+            <td>
+              <a class="btn btn-success" href="/admin/order-details?id=${order._id}">DETAILS</a>
+            </td>
+          </tr>
+        `;
+                    orderTable.innerHTML += row;
+                });
+                orderTable.innerHTML += '</tbody>';
+            })
+            .catch(error => console.error(error));
+    }
+</script>
+<script>
+    function delivered() {
+        fetch('/admin/delivered')
+            .then(response => response.json())
+            .then(data => {
+
+                const orderTable = document.getElementById('order-table');
+                orderTable.innerHTML = `
+        <thead class="thead-dark">
+          <tr>
+            <th>ORDER DATE</th>
+            <th>ORDER ID</th>
+            <th>PAYMENT MODE</th>
+            <th>ORDER STATUS</th>
+            <th>TOTAL</th>
+            <th>ACTION</th>
+          </tr>
+        </thead>
+        <tbody>
+      `;
+                data.forEach(order => {
+                    const row = `
+          <tr>
+            <td>${(order.orderDate)}</td>
+            <td>${order.orderId}</td>
+            <td>${order.paymentMode}</td>
+            <td>${order.status}</td>
+            <td>${order.orderBill}</td>
+            <td>
+              <a class="btn btn-success" href="/admin/order-details?id=${order._id}">DETAILS</a>
+            </td>
+          </tr>
+        `;
+                    orderTable.innerHTML += row;
+                });
+                orderTable.innerHTML += '</tbody>';
+            })
+            .catch(error => console.error(error));
+
+    }
+</script>
+
+<script>
+    function returned() {
+        fetch('/admin/returned')
+            .then(response => response.json())
+            .then(data => {
+
+                const orderTable = document.getElementById('order-table');
+                orderTable.innerHTML = `
+        <thead class="thead-dark">
+          <tr>
+            <th>ORDER DATE</th>
+            <th>ORDER ID</th>
+            <th>PAYMENT MODE</th>
+            <th>ORDER STATUS</th>
+            <th>TOTAL</th>
+            <th>ACTION</th>
+          </tr>
+        </thead>
+        <tbody>
+      `;
+                data.forEach(order => {
+                    const row = `
+          <tr>
+            <td>${(order.orderDate)}</td>
+            <td>${order.orderId}</td>
+            <td>${order.paymentMode}</td>
+            <td>${order.status}</td>
+            <td>${order.orderBill}</td>
+            <td>
+              <a class="btn btn-success" href="/admin/order-details?id=${order._id}">DETAILS</a>
+            </td>
+          </tr>
+        `;
+                    orderTable.innerHTML += row;
+                });
+                orderTable.innerHTML += '</tbody>';
+            })
+            .catch(error => console.error(error));
+    }
+</script>
