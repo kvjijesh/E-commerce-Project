@@ -1,8 +1,8 @@
 const express = require("express");
 const router = express.Router();
 const userController = require("../controllers/userController");
-const productController = require("../controllers/productController");
-const orderController = require("../controllers/orderController");
+const productController = require("../controllers/product_controller/productController");
+const orderController = require("../controllers/order_controller/orderController");
 const auth = require("../middlewares/auth");
 /* GET home page. */
 router.get("/", userController.loadHome);
@@ -49,7 +49,7 @@ router.put("/orders/:orderId/cancel", orderController.cancellOrder);
 router.put("/orders/:orderId/return", orderController.returnOrder);
 router.post("/coupon-apply", orderController.couponApply);
 router.get("/past-orders", auth.isLogin, orderController.pastOrder);
-router.get('/invoice/:orderId',auth.isLogin,orderController.invoicedown)
-router.get('/search',productController.productsearch)
+router.get("/invoice/:orderId", auth.isLogin, orderController.invoicedown);
+router.get("/search", productController.productsearch);
 
 module.exports = router;

@@ -1,6 +1,6 @@
-const Product = require("../models/productModel");
-const Category = require("../models/categoryModel");
-const User=require('../models/userModel')
+const Product = require("../../models/productModel");
+const Category = require("../../models/categoryModel");
+const User = require("../../models/userModel");
 const mongoose = require("mongoose");
 const hbs = require("hbs");
 
@@ -11,7 +11,6 @@ hbs.registerHelper("not", function (value) {
 hbs.registerHelper("or", function (a, b) {
   return a || b;
 });
-
 
 const addProduct = async (req, res) => {
   try {
@@ -99,11 +98,10 @@ const getProduct = async (req, res) => {
 const editProductLoad = async (req, res) => {
   try {
     const id = req.params.id;
-    const category= await Category.find();
-    const prodData = await Product.findById({ _id: id }).populate('category');
+    const category = await Category.find();
+    const prodData = await Product.findById({ _id: id }).populate("category");
     if (prodData) {
-
-      res.render("adminViews/edit", { products: prodData,category });
+      res.render("adminViews/edit", { products: prodData, category });
     } else {
       res.redirect("/admin/home");
     }
@@ -241,14 +239,20 @@ const productDetailLoad = async (req, res) => {
   try {
     const id = req.query.id;
     const userData = req.session.user;
-    const prodData = await Product.findById( {_id:id });
-    console.log(prodData)
+    const prodData = await Product.findById({ _id: id });
+    console.log(prodData);
 
     if (req.session.user) {
-      const isCart= await User.findOne({ _id: userData._id, "cart.product": id })
+      const isCart = await User.findOne({
+        _id: userData._id,
+        "cart.product": id,
+      });
       if (prodData) {
-
-        res.render("userViews/productDetail", { products: prodData, userData ,isCart});
+        res.render("userViews/productDetail", {
+          products: prodData,
+          userData,
+          isCart,
+        });
       } else {
         res.redirect("/product");
       }
@@ -304,27 +308,24 @@ const blockProduct = async (req, res) => {
     console.log(error.message);
   }
 };
-const productsearch=async(req,res)=>{
+const productsearch = async (req, res) => {
   try {
+    const query = req.query.q;
+    console.log(query);
 
-  const query = req.query.q;
-  console.log(query)
+    const results = await Product.find({
+      $or: [
+        { name: { $regex: query, $options: "i" } },
+        { description: { $regex: query, $options: "i" } },
+      ],
+    });
 
-  const results = await Product.find({
-    $or: [
-      { name: { $regex: query, $options: 'i' } },
-      { description: { $regex: query, $options: 'i' } }
-    ]
-  });
-
-  console.log(results)
-  res.json(results);
-}
-catch (error) {
-  console.log(error)
-
-}
-}
+    console.log(results);
+    res.json(results);
+  } catch (error) {
+    console.log(error);
+  }
+};
 
 //export
 module.exports = {
@@ -339,5 +340,5 @@ module.exports = {
   womenProductLoad,
   menProductLoad,
   blockProduct,
-  productsearch
+  productsearch,
 };

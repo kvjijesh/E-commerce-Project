@@ -4,7 +4,7 @@ const bcrypt = require("bcrypt");
 const { find, findById } = require("../models/userModel");
 const nodemailer = require("nodemailer");
 const Category = require("../models/categoryModel");
-const { getAllProducts } = require("./productController");
+const { getAllProducts } = require("./product_controller/productController");
 const Address = require("../models/addressModel");
 const Banner = require("../models/bannerModel");
 const hbs = require("hbs");
@@ -64,7 +64,7 @@ const loadHome = async (req, res) => {
   try {
     const categories = await Category.find();
     const banner = await Banner.find();
-    const products= await Product.find({is_blocked:false})
+    const products = await Product.find({ is_blocked: false });
 
     if (categories) {
       if (req.session.userData) {
@@ -74,13 +74,13 @@ const loadHome = async (req, res) => {
           categories: categories,
           userData: userlogData,
           banner: banner,
-          products
+          products,
         });
       } else {
         res.render("userViews/home", {
           categories: categories,
           banner: banner,
-          products
+          products,
         });
       }
     } else {
@@ -100,9 +100,11 @@ const loadSignup = async (req, res) => {
 };
 
 const otpsubmit = async (req, res) => {
+  try {
   const spassword = await securePassword(userRegData.password);
   const enteredotp = req.body.otp;
 
+if(enteredotp){
   if (enteredotp == otp) {
     const user = new User({
       name: userRegData.name,
@@ -119,6 +121,14 @@ const otpsubmit = async (req, res) => {
   } else {
     res.render("userViews/verifyOtp", { message: "Invalid otp" });
   }
+}
+else{
+  res.render("userViews/verifyOtp", { message: "Please enter OTP" });
+
+}
+} catch (error) {
+console.error(error);
+}
 };
 
 const createUser = async (req, res) => {
@@ -205,6 +215,8 @@ const profileLoad = async (req, res) => {
 };
 
 const adressLoad = async (req, res) => {
+  try {
+
   const userData = req.session.user;
   const id = userData._id;
 
@@ -213,6 +225,9 @@ const adressLoad = async (req, res) => {
   if (req.session.user) {
     res.render("userViews/adresspage", { userData, userAddress });
   }
+} catch (error) {
+console.error(error);
+}
 };
 
 const addAdressLoad = async (req, res) => {
@@ -227,7 +242,7 @@ const addAddress = async (req, res) => {
   try {
     const userData = req.session.user;
     const id = userData._id;
-    console.log(req.body)
+    console.log(req.body);
     const address = new Address({
       owner: id,
       name: req.body.name,
@@ -252,16 +267,16 @@ const editUserPage = async (req, res) => {
 };
 
 const editUserpost = async (req, res) => {
+  try {
   const id = req.query.id;
-  console.log(id);
-  console.log(req.body.name);
+  const {name,mobile,email}=req.body
   const userData = await User.findByIdAndUpdate(
     { _id: id },
     {
       $set: {
-        name: req.body.name,
-        mobile: req.body.mobile,
-        email: req.body.email,
+        name: name,
+        mobile: mobile,
+        email: email,
       },
     },
     { new: true }
@@ -271,6 +286,9 @@ const editUserpost = async (req, res) => {
   console.log(req.session.user);
 
   res.redirect("/profile");
+} catch (error) {
+  console.error(error);
+}
 };
 
 const addToCart = async (req, res) => {
@@ -347,27 +365,24 @@ const viewCart = async (req, res) => {
     const cart = user.cart;
 
     let cartTotal = 0;
-    if(cart.length>0)
-    {
+    if (cart.length > 0) {
+      for (let i = 0; i < cart.length; i++) {
+        const item = cart[i];
+        const product = item.product;
+        const quantity = item.quantity;
+        const total = product.price * quantity;
+        item.total = total;
+        cartTotal += total;
+      }
 
-    for (let i = 0; i < cart.length; i++) {
-      const item = cart[i];
-      const product = item.product;
-      const quantity = item.quantity;
-      const total = product.price * quantity;
-      item.total = total;
-      cartTotal += total;
+      res.render("userViews/cartview", {
+        userData: userData,
+        cartItems: cart,
+        cartTotal: cartTotal,
+      });
+    } else {
+      res.redirect("/product");
     }
-
-    res.render("userViews/cartview", {
-      userData: userData,
-      cartItems: cart,
-      cartTotal: cartTotal,
-    });
-  }
-  else{
-    res.redirect('/product')
-  }
   } catch (error) {
     //res.render("error");
   }

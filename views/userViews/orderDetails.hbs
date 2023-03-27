@@ -70,7 +70,9 @@
             <button id="returnbutton" class="btn btn-success mx-2" onclick="returnOrder('{{orderData._id}}')">Return
                 Order</button>
             {{/if}}
-            <button class="btn btn-secondary" onclick="invoice('{{orderData._id}}')">INVOICE</button>
+            {{#if (noteq orderData.status "cancelled")}}
+            <button id="invoice" class="btn btn-secondary" onclick="invoice('{{orderData._id}}')">INVOICE</button>
+            {{/if}}
         </div>
         <div class="full">
             <div class="left">
@@ -88,6 +90,7 @@
                 <strong class="status" id="order-{{orderData._id}}-status">ORDER STATUS: {{orderData.status}}</strong>
             </div>
         </div>
+        <p id="cancelMessage"></p>
     </div>
 </div>
 <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
@@ -110,6 +113,9 @@
                             });
                             document.getElementById(`order-${orderId}-status`).innerHTML = "ORDER STATUS:" + `${updatedOrder.status}`
                             document.getElementById('cancellbutton').style.display = 'none'
+                            document.getElementById('invoice').style.display = 'none'
+                            document.getElementById('cancelMessage').innerHTML='* Your refund will be credited to original payment mode with in 3-5 days.'
+
                         });
                 } else {
                     swal("Your cancel aborted");
@@ -133,6 +139,7 @@
                         });
                         document.getElementById(`order-${orderId}-status`).innerHTML = "ORDER STATUS:" + `${updatedOrder.status}`
                         document.getElementById('returnbutton').style.display = 'none'
+
                     });
             } else {
                 swal("Your return cancelled !");
