@@ -21,6 +21,7 @@ const createAdmin = async (req, res) => {
     const spassword = await securePassword(req.body.password);
 
     email = req.body.email;
+    
     if(req.body&&email)
     {
 

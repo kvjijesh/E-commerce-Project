@@ -53,16 +53,12 @@ hbs.registerHelper("for", function (from, to, incr, block) {
 const checkoutPage = async (req, res) => {
   try {
     const userId = req.session.user._id;
-
     const user = await User.findOne({ _id: userId }).populate("cart.product");
-
     const cart = user.cart;
     if (cart.length < 1) {
       res.redirect("/product");
     }
-
     const address = await Address.find({ owner: userId });
-
     let cartTotal = 0;
     cart.forEach((item) => {
       const product = item.product;
@@ -71,7 +67,6 @@ const checkoutPage = async (req, res) => {
       item.total = total;
       cartTotal += total;
     });
-
     res.render("userViews/checkoutPage", {
       userData: req.session.user,
       address,
@@ -89,11 +84,9 @@ const orderSummary = async (req, res) => {
     const { address, cartTotal, paymentMode, discount } = req.body;
     const orderDate = new Date();
     const formattedDate = moment(orderDate).format("DD-MM-YYYY");
-
     const userData = req.session.user;
     const userId = req.session.user._id;
     const user = await User.findById(userId).populate("cart.product");
-
     const cartItems = user.cart.map((item) => {
       return {
         product: item.product._id,
@@ -203,7 +196,6 @@ const paymentLoad = async (req, res) => {
   try {
     const userData = req.session.user;
     // const orderData= await Order.findOne({owner:userData._id}).populate("items.product").populate("address")
-
     const userId = req.session.user._id;
     const user = await User.findOne({ _id: userId }).populate("cart.product");
     const order = await Order.findOne({ owner: userId }).sort({

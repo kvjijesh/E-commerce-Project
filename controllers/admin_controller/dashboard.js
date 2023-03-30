@@ -2,7 +2,7 @@ const Admin = require("../../models/adminModel");
 const User = require("../../models/userModel");
 const Order = require("../../models/orderModel.js");
 const Product = require("../../models/productModel");
-const Category=require("../../models/categoryModel");
+const Category = require("../../models/categoryModel");
 const ExcelJS = require("exceljs");
 const moment = require("moment");
 const hbs = require("hbs");
@@ -30,127 +30,132 @@ const loadDashboard = async (req, res) => {
 
 const homeload = async (req, res) => {
   try {
-  const users = await User.find({}).count();
-  const products = await Product.find({}).count();
-  const orders = await Order.find({}).count();
-  const allOrders = await Order.find({ status: "delivered" });
-  const totalRevenue = allOrders.reduce(
-    (total, order) => total + Number(order.orderBill),
-    0
-  );
- //category sales
- const categorysale=await   Order.aggregate([
-  {
-    $lookup: {
-      from: 'addresses', // Name of the collection joining with
-      localField: 'address',
-      foreignField: '_id',
-      as: 'address' // Name of the array field where the joined documents will be stored
-    }
-  },
-  {
-    $unwind: '$items' // Deconstruct the items array
-  },
-  {
-    $lookup: {
-      from: 'products', // Name of the collection  joining with
-      localField: 'items.product',
-      foreignField: '_id',
-      as: 'product' // Name of the array field where the joined documents will be stored
-    }
-  },
-  {
-    $unwind: '$product' // Deconstruct the product array
-  },
-  {
-    $group: {
-      _id: '$product.category',
-      count: { $sum: 1 }
-    }
-  },
-  {
-    $lookup: {
-      from: 'categories', // Name of the collection joining with
-      localField: '_id',
-      foreignField: '_id',
-      as: 'category' // Name of the array field where the joined documents will be stored
-    }
-  },
-  {
-    $unwind: '$category' // Deconstruct the category array
-  },
-  {
-    $project: {
-      _id: 0,
-      category: '$category.name',
-      count: 1
-    }
-  }
-], (err, result) => {
-  if (err) {
-    console.log(err);
-  } else {
-    console.log(result);
-  }
-});
-
-  const cashOnDeliveryCount = await Order.countDocuments({
-    paymentMode: "cashondelivery",
-  });
-  const razorPayCount = await Order.countDocuments({ paymentMode: "razorpay" });
-
-  const pipeline = [
-    {
-      $group: {
-        _id: {
-          year: { $year: "$createdAt" },
-          month: { $month: "$createdAt" },
-        },
-        count: { $sum: 1 },
-      },
-    },
-    {
-      $project: {
-        _id: 0,
-        date: {
-          $dateFromParts: {
-            year: "$_id.year",
-            month: "$_id.month",
-            day: 1,
+    const users = await User.find({}).count();
+    const products = await Product.find({}).count();
+    const orders = await Order.find({}).count();
+    const allOrders = await Order.find({ status: "delivered" });
+    const totalRevenue = allOrders.reduce(
+      (total, order) => total + Number(order.orderBill),
+      0
+    );
+    //category sales
+    const categorysale = await Order.aggregate(
+      [
+        {
+          $lookup: {
+            from: "addresses", // Name of the collection joining with
+            localField: "address",
+            foreignField: "_id",
+            as: "address", // Name of the array field where the joined documents will be stored
           },
         },
-        count: 1,
+        {
+          $unwind: "$items", // Deconstruct the items array
+        },
+        {
+          $lookup: {
+            from: "products", // Name of the collection  joining with
+            localField: "items.product",
+            foreignField: "_id",
+            as: "product", // Name of the array field where the joined documents will be stored
+          },
+        },
+        {
+          $unwind: "$product", // Deconstruct the product array
+        },
+        {
+          $group: {
+            _id: "$product.category",
+            count: { $sum: 1 },
+          },
+        },
+        {
+          $lookup: {
+            from: "categories", // Name of the collection joining with
+            localField: "_id",
+            foreignField: "_id",
+            as: "category", // Name of the array field where the joined documents will be stored
+          },
+        },
+        {
+          $unwind: "$category", // Deconstruct the category array
+        },
+        {
+          $project: {
+            _id: 0,
+            category: "$category.name",
+            count: 1,
+          },
+        },
+      ],
+      (err, result) => {
+        if (err) {
+          console.log(err);
+        } else {
+          console.log(result);
+        }
+      }
+    );
+
+    const cashOnDeliveryCount = await Order.countDocuments({
+      paymentMode: "cashondelivery",
+    });
+    const razorPayCount = await Order.countDocuments({
+      paymentMode: "razorpay",
+    });
+
+    const pipeline = [
+      {
+        $group: {
+          _id: {
+            year: { $year: "$createdAt" },
+            month: { $month: "$createdAt" },
+          },
+          count: { $sum: 1 },
+        },
       },
-    },
-    {
-      $sort: {
-        date: 1,
+      {
+        $project: {
+          _id: 0,
+          date: {
+            $dateFromParts: {
+              year: "$_id.year",
+              month: "$_id.month",
+              day: 1,
+            },
+          },
+          count: 1,
+        },
       },
-    },
-  ];
-  const ordersByMonth = await Order.aggregate(pipeline);
-  const orderCounts = ordersByMonth.map(({ date, count }) => ({
-    month: date.toLocaleString("default", { month: "long" }),
-    count,
-  }));
+      {
+        $sort: {
+          date: 1,
+        },
+      },
+    ];
+    const ordersByMonth = await Order.aggregate(pipeline);
+    const orderCounts = ordersByMonth.map(({ date, count }) => ({
+      month: date.toLocaleString("default", { month: "long" }),
+      count,
+    }));
 
-  res.render("adminViews/adminhome", {
-    cashOnDeliveryCount,
-    razorPayCount,
-    orderCounts,
-    users,
-    products,
-    orders,
-    totalRevenue,
-    categorysale
-  });
-
-} catch (error) {
-  console.error(error);
-
-}
+    res.render("adminViews/adminhome", {
+      cashOnDeliveryCount,
+      razorPayCount,
+      orderCounts,
+      users,
+      products,
+      orders,
+      totalRevenue,
+      categorysale,
+    });
+  } catch (error) {
+    console.error(error);
+  }
 };
 const dailysales = async (req, res) => {
+  try {
+
   const orderDate = req.body.daily;
   const oDate = moment(orderDate).format("DD-MM-YYYY");
   dailyorders = await Order.find({ orderDate: oDate }).populate("address");
@@ -158,8 +163,10 @@ const dailysales = async (req, res) => {
     (total, order) => total + Number(order.orderBill),
     0
   );
-
   res.render("adminViews/dailysales", { dailyorders, totalOrderBill });
+} catch (error) {
+  console.error(error)
+}
 };
 const dailyDownload = async (req, res) => {
   const workbook = new ExcelJS.Workbook();
@@ -285,18 +292,20 @@ const monthlyDownload = async (req, res) => {
 };
 
 const yearlysales = async (req, res) => {
+  try {
   const orders = await Order.find();
   const year = req.body.yearly;
   yearlyorders = orders.filter(
     (order) => order.createdAt.getFullYear() === parseInt(year)
   );
-
   totalYearlyBill = yearlyorders.reduce(
     (total, order) => total + Number(order.orderBill),
     0
   );
-
   res.render("adminViews/yearlyorders", { yearlyorders, totalYearlyBill });
+} catch (error) {
+  console.error(error)
+}
 };
 
 const yearlydownload = async (req, res) => {
@@ -347,7 +356,6 @@ const yearlydownload = async (req, res) => {
 
 //exports
 module.exports = {
-
   loadDashboard,
   homeload,
   dailysales,

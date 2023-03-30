@@ -12,10 +12,16 @@ const couponPage = async (req, res) => {
 const createCouponLoad = async (req, res) => {
   res.render("adminViews/createCoupon");
 };
+
 const createCoupon = async (req, res) => {
-  const coupon = await Coupon.create(req.body);
+  try {
+  await Coupon.create(req.body);
   res.redirect("/admin/coupon");
+} catch (error) {
+  console.error(error)
+}
 };
+
 const deleteCoupon = async (req, res) => {
   try {
     await Coupon.findByIdAndDelete(req.params.id);

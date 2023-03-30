@@ -176,18 +176,6 @@ const addProductLoad = async (req, res) => {
     console.log(error.message);
   }
 };
-// const userproductload=async(req,res)=>{
-//     const productData=await Product.find({is_blocked:false})
-
-//     console.log(productData);
-//     if(req.session.userData){
-//     const userData=req.session.user
-//     res.render('userViews/producthome',{products:productData,userData })
-//     }
-//     else{
-//         res.render('userViews/producthome',{products:productData})
-//     }
-// }
 
 const userproductload = async (req, res) => {
   try {
@@ -265,6 +253,10 @@ const productDetailLoad = async (req, res) => {
 };
 
 const womenProductLoad = async (req, res) => {
+
+  try {
+
+
   const categoryId = req.query.id;
   const userData = req.session.user;
 
@@ -279,8 +271,13 @@ const womenProductLoad = async (req, res) => {
   } else {
     res.render("userViews/womenpage", { women: productWomen });
   }
+} catch (error) {
+  console.log(error)
+}
 };
 const menProductLoad = async (req, res) => {
+  try {
+
   const categoryId = req.query.id;
   const productmen = await Product.find({
     category: categoryId,
@@ -288,13 +285,17 @@ const menProductLoad = async (req, res) => {
   });
   console.log(productmen);
   res.render("userViews/menspage", { men: productmen });
+
+} catch (error) {
+  console.log(error)
+}
 };
 
 const blockProduct = async (req, res) => {
   const data = await Product.findById(req.params.id);
   const blockstatus = data.is_blocked;
   try {
-    const productdata = await Product.findByIdAndUpdate(
+      await Product.findByIdAndUpdate(
       req.params.id,
       {
         $set: {

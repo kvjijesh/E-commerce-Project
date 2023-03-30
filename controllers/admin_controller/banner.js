@@ -46,7 +46,7 @@ const editBannerLoad = async (req, res) => {
 
 const editBanner = async (req, res) => {
   try {
-    const { bannerId } = req.query;
+    const bannerId  = req.query.id;
     const bannerImg = await Banner.findById(bannerId);
     const exstImg = bannerImg.image;
 
@@ -81,7 +81,7 @@ const editBanner = async (req, res) => {
 };
 
 const deleteBanner = async (req, res) => {
-  const { id } = req.query;
+  const id  = req.query.id;
   try {
     await Banner.findByIdAndDelete(id);
     res.redirect("/admin/banner");
