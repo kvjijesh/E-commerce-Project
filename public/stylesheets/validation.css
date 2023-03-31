@@ -1,6 +1,6 @@
-body {
-    /* background: linear-gradient(to right, #22aae4, #408b3e); */
-    font-family: 'Poppins', sans-serif;
+.body {
+
+    font-family: 'Montserrat', sans-serif;
     height: fit-content;
 
 }
@@ -11,9 +11,9 @@ body {
     padding: 20px;
     margin-bottom: 20vh;
 
-    background-color: whitesmoke;
+    background: linear-gradient(to right, #c1cbcf, #408b3e);
     border-radius: 4px;
-    font-size: 12px;
+    font-size: 15px;
 }
 
 #form h1 {
