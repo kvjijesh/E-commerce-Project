@@ -167,12 +167,20 @@ a{
     </div>
     <div class="text">
         <h1>Oops !! {{error.status}} :(</h1>
-        <h2>{{message}}</h2>
-      {{!-- <h2>Couldn't launch :(</h2> --}}
+        <h3>{{error.message}}</h3>
 
-         <pre>{{error}}</pre>
+
+         <button onclick="goBack()">Go Back</button>
+
     </div>
 </body>
+
+<script>
+function goBack() {
+  window.history.back();
+}
+</script>
+
 </html>
 
 

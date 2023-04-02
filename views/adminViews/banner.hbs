@@ -78,6 +78,9 @@
         }
     }
 </style>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.css">
+
+
 
 
 <div class="container">
@@ -95,7 +98,7 @@
 
 			</tr>
 		</thead>
-		 {{#each banner}}
+{{#each banner}}
 
     <tbody>
     <tr>
@@ -107,16 +110,44 @@
        <td>{{formatDate this.createdAt 'DD-MM-YYYY'}}</td>
        <td>
         <a class="btn btn-success" href="/admin/edit-banner?id={{this._id}}">EDIT</a>
-        <a class="btn btn-danger" href="/admin/delete-banner?id={{this._id}}">DELETE</a>
+        <a class="btn btn-danger delete-link" href="/admin/delete-banner?id={{this._id}}">DELETE</a>
+
        </td>
 
 
     </tr>
     </tbody>
-    {{/each}}
+{{/each}}
 
 	</table>
 
     <a class="btn btn-primary" style="margin-top: 10px;" href="/admin/create-banner">CREATE</a>
 
 </div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.js"></script>
+<script>
+const deleteLinks = document.querySelectorAll('.delete-link');
+
+deleteLinks.forEach(deleteLink => {
+  deleteLink.addEventListener('click', function(event) {
+    event.preventDefault(); // prevent the link from navigating to a new page
+
+    const url = this.getAttribute('href');
+    swal({
+      title: 'Are you sure?',
+      text: 'This action cannot be undone.',
+      type: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#DD6B55',
+      confirmButtonText: 'Yes, delete it!',
+      closeOnConfirm: false
+    }, function() {
+      
+      window.location.href = url;
+    });
+  });
+});
+
+</script>
+
+{{>adminfooter}}

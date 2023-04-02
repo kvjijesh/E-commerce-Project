@@ -21,7 +21,7 @@ const createAdmin = async (req, res) => {
     const spassword = await securePassword(req.body.password);
 
     email = req.body.email;
-    
+
     if(req.body&&email)
     {
 
@@ -81,7 +81,7 @@ const verifyAdminLogin = async (req, res) => {
         if (adminData.role == "Admin") {
           req.session.admin_id = adminData._id;
 
-          res.redirect("admin/home");
+          res.redirect("admin/dashboard");
         } else {
           res.render("adminViews/AdminLogin", {
             message: "Un authorised access !!",

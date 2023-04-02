@@ -81,7 +81,7 @@ const viewCart = async (req, res) => {
     const cart = user.cart;
 
     let cartTotal = 0;
-    if (cart.length > 0) {
+
       for (let i = 0; i < cart.length; i++) {
         const item = cart[i];
         const product = item.product;
@@ -96,12 +96,9 @@ const viewCart = async (req, res) => {
         cartItems: cart,
         cartTotal: cartTotal,
       });
-    } else {
-      res.redirect("/product");
-    }
+
   } catch (error) {
-    console.error(error)
-    //res.render("error");
+    res.status(500).send(`${error.message}`);
   }
 };
 const removeCart = async (req, res) => {
@@ -135,11 +132,15 @@ const removeCart = async (req, res) => {
         cartItems: cart,
         cartTotal,
       });
+    } else {
+      throw new Error('User not logged in');
     }
   } catch (error) {
-    console.log(error.message);
+    
+    res.status(500).send('An error occurred while removing item from cart');
   }
 };
+
 const cartUpdation = async (req, res) => {
   try {
     const userData = req.session.user;
