@@ -11,7 +11,7 @@ const adressLoad = async (req, res) => {
       res.render("userViews/adresspage", { userData, userAddress });
     }
   } catch (error) {
-    console.error(error);
+    res.status(500).send(error.message)
   }
 };
 
@@ -40,7 +40,7 @@ const addAddress = async (req, res) => {
     await address.save();
     res.redirect("/address");
   } catch (error) {
-    console.log(error.message);
+    res.status(500).send(error.message)
   }
 };
 
