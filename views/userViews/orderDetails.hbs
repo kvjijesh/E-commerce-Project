@@ -84,7 +84,9 @@
                 Order</button>
             {{/if}}
             {{#if (noteq orderData.status "cancelled")}}
-            <button id="invoice" class="btn btn-secondary" onclick="invoice('{{orderData._id}}')">INVOICE</button>
+            {{!-- <button id="invoice" class="btn btn-secondary" onclick="invoice('{{orderData._id}}')">INVOICE</button> --}}
+             <button id="invoice" class="btn btn-secondary" onclick="window.location.href='/invoice/{{orderData._id}}'">INVOICE</button>
+
             {{/if}}
         </div>
 
@@ -182,28 +184,25 @@
 
 
 
-    const invoice = async (orderId) => {
-        try {
+    {{!-- const invoice = async (orderId) => {
 
-            const response = await fetch(`/invoice/${orderId}`);
-            if (response.ok == true)
-                swal("Good job!", "You Invoice is ready!", "success");
-            else
-                swal("Oops!", "You Invoice failed!", "error");
+            console.log(orderId)
+            fetch(`/invoice/${orderId}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
 
-            /* console.log(response)
-             const blob =await response.blob();
-             const url = URL.createObjectURL(blob);
-             const link = document.createElement('a');
-             link.href = url;
-             link.download =  `invoice-${orderId}.pdf`;
-             link.click();*/
+                    console.log(data);
+                })
 
-
-        } catch (error) {
-            console.log(error);
-        }
-    };
+        .catch(error => {
+    console.error('There was a problem fetching the invoice:', error);
+  })
+    }; --}}
 
 
 </script>

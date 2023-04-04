@@ -9,6 +9,7 @@ const Coupon = require("../../models/couponModel");
 const pdfkit = require("pdfkit");
 const fs = require("fs");
 const moment = require("moment");
+const easyinvoice=require('easyinvoice')
 
 const instance = new Razorpay({
   key_id: process.env.KEY_ID,
@@ -353,76 +354,114 @@ const pastOrder = async (req, res) => {
 };
 
 const invoicedown = async (req, res) => {
+
   try {
-    const orderId = req.params.orderId;
-    const userData = req.session.user;
-    const user = await User.findOne({ _id: userData._id });
-    // Retrieve invoice data
-    const order = await Order.findById(orderId)
-      .populate("items.product")
-      .populate("address");
+    const orderid = req.params.orderId
+    const userdata = req.session.user
+    const userid = userdata._id
+    const userdatas = await User.findById(userid).populate('cart.product')
+    const orderdata = await Order.findById(orderid).populate('items.product').populate('address')
 
-    // Create PDF document
-    const doc = new pdfkit();
 
-    // Add invoice header
-    doc.text(`Invoice for order #${order.orderId}`);
+    const productdata = orderdata.items
 
-    // Add order details
-    doc.text(`Order Date: ${order.createdAt}`);
-    doc.text(`Name: ${user.name}`);
+    const invoiceItems = []
 
-    doc.text(
-      `Shipping Address: ${order.address.address1}, ${order.address.city}, ${order.address.state}`
-    );
-    doc.moveDown();
+    productdata.map((item) => {
+      const product = item.product
+      const quantity = item.quantity
+      const total = product.price * quantity
+      const pro = {
+        'name': `${product.name}`,
+        "quantity": `${quantity}`,
+        'description': `${product.description}`,
+        'total': `${total}`,
+        'price': `${product.price}`
+      };
 
-    // Add item table
-    doc
-      .text("Product", 50, 200)
-      .text("Quantity", 250, 200)
-      .text("Price", 350, 200)
-      .text("Total", 450, 200);
-    doc.moveTo(50, 220).lineTo(550, 220).stroke(); // horizontal line
+      invoiceItems.push(pro);
+    })
 
-    let y = 240; // starting y-coordinate for the first row
-    let total = 0;
-    order.items.forEach((item) => {
-      const product = item.product;
-      const itemName = product.name;
-      const itemQuantity = item.quantity;
-      const itemPrice = `Rs.${product.price}`;
-      const itemTotal = `Rs.${item.quantity * product.price}`;
+    var currentDate = new Date()
 
-      doc
-        .text(itemName, 50, y)
-        .text(itemQuantity, 250, y)
-        .text(itemPrice, 350, y)
-        .text(itemTotal, 450, y);
+    var data = {
 
-      y += 20; // increment y-coordinate for the next row
-      total += item.quantity * product.price;
+      "customize": {
+
+      },
+     
+      // Your own data
+      "sender": {
+        "company": "STYLE MAVEN",
+        "address": "HSR Layout 4th phase",
+        "zip": "670895 ",
+        "city": "Bengaluru",
+        "country": "India"
+
+      },
+      // Your recipient
+      "client": {
+        "company": `${orderdata.address.name}`,
+        "address1": `${orderdata.address.address1}`,
+        "address2": `${orderdata.address.address2}`,
+        "city": `${orderdata.address.city}`,
+        "zip": `${orderdata.address.zip}`,
+        "country": "India"
+
+      },
+      "information": {
+        // Invoice number
+        "number": `${orderdata.orderId}`,
+        // Invoice data
+        "date": `${orderdata.orderDate}`,
+
+      },
+
+      "products": invoiceItems,
+
+
+      // The message you would like to display on the bottom of your invoice
+      "bottom-notice": "Thank You for the Purchase !.",
+      // Settings to customize your invoice
+      "settings": {
+        "currency": "INR",
+        "locale": "nl-NL",
+        "tax-notation": "gst",
+        "margin-top": 25,
+        "margin-right": 25,
+        "margin-left": 25,
+        "margin-bottom": 25,
+        "format": "A4",
+        "height": "1000px",
+        "width": "500px",
+        "orientation": "landscape",
+      },
+
+    };
+
+    //Create your invoice! Easy!
+    await easyinvoice.createInvoice(data, function (result) {
+      //The response will contain a base64 encoded PDF file
+
+      easyinvoice.createInvoice(data, function (result) {
+        //The response will contain a base64 encoded PDF file
+        const fileName = 'invoice.pdf';
+        const pdfBuffer = Buffer.from(result.pdf, 'base64');
+        res.setHeader('Content-Type', 'application/pdf');
+        res.setHeader('Content-Disposition', 'attachment; filename=' + fileName);
+        res.send(pdfBuffer);
+      })
+      console.log('PDF base64 string: ');
     });
 
-    doc.moveTo(50, y).lineTo(550, y).stroke(); // horizontal line
-    doc.text(`Discount Rs.${order.discount}`, 400, y + 20);
-    doc.moveTo(50, y).lineTo(550, y).stroke(); // horizontal line
-    doc.text(`Grand Total Rs.${order.orderBill}`, 385, y + 40);
-
-    // Save PDF to file
-    const filename = `invoice-${order.orderId}.pdf`;
-    const filepath = `/Users/jijesh/Downloads/${filename}`;
-
-    doc.pipe(fs.createWriteStream(filepath));
-    doc.end();
-
-    // Download PDF
-    res.download(filepath, filename);
   } catch (error) {
-
-    res.status(500).send("Internal server error");
+    res.status(500).send({error:`${error}`})
   }
-};
+
+}
+
+
+
 
 //exprts
 module.exports = {
