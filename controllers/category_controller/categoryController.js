@@ -9,12 +9,12 @@ const createCategory = async (req, res) => {
     }
     const name = capitalizeFirstLetter(str);
 
-    console.log(req.body);
+
     const file = req.file;
     const fileName = file.filename;
     const basePath = "/images/";
     const categoryData = await Category.findOne({ name: name });
-    console.log(categoryData);
+
     if (categoryData == null) {
       const category = new Category({
         name: name,
@@ -28,8 +28,8 @@ const createCategory = async (req, res) => {
       });
     }
   } catch (error) {
-    console.log("hi");
-    console.log(error.message);
+   ;
+   res.status(500).send({message:`${error}`})
   }
 };
 
@@ -40,7 +40,7 @@ const deleteCategory = async (req, res) => {
     await Category.findByIdAndDelete(id);
     res.redirect("/admin/category");
   } catch (error) {
-    console.log(error.message);
+   
     res.status(500).json({ message: "server error" });
   }
 };
@@ -98,7 +98,7 @@ const editCategoryLoad = async (req, res) => {
       res.redirect("/admin/home");
     }
   } catch (error) {
-    console.log(error.message);
+    res.status(500).send({message:`${error}`})
   }
 };
 

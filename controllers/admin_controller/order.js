@@ -8,7 +8,7 @@ const orderList = async (req, res) => {
       .sort({ createdAt: -1 });
     res.render("adminViews/orderList", { orderData: orderData });
   } catch (error) {
-    console.log(error.message);
+    res.status(500).send({message:`${error}`})
   }
 };
 const changeStatus = async (req, res) => {
@@ -24,7 +24,7 @@ const changeStatus = async (req, res) => {
     );
     res.redirect("back");
   } catch (error) {
-    console.log(error);
+    res.status(500).send({message:`${error}`})
   }
 };
 const shippedOrders = async (req, res) => {
@@ -36,7 +36,7 @@ const shippedOrders = async (req, res) => {
         .sort({ createdAt: -1 })
     );
   } catch (error) {
-    console.log(error);
+    res.status(500).send({message:`${error}`})
   }
 };
 
@@ -50,7 +50,7 @@ const orderDetailsAdmin = async (req, res) => {
 
     res.render("adminViews/orderDetailsAdmin", { orderData });
   } catch (error) {
-    console.log(error);
+    res.status(500).send({message:`${error}`})
   }
 };
 
@@ -63,7 +63,7 @@ const deliveredOrders = async (req, res) => {
         .sort({ createdAt: -1 })
     );
   } catch (error) {
-    console.log(error);
+    res.status(500).send({message:`${error}`})
   }
 };
 const returnedOrders = async (req, res) => {
@@ -75,7 +75,7 @@ const returnedOrders = async (req, res) => {
         .sort({ createdAt: -1 })
     );
   } catch (error) {
-    console.log(error);
+    res.status(500).send({message:`${error}`})
   }
 };
 

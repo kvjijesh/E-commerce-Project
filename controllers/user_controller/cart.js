@@ -60,7 +60,7 @@ const addToCart = async (req, res) => {
         req.session.user = updatedUser;
 
         const userData = req.session.user;
-        console.log(userData.cart[0].product);
+        
         res.render("userViews/productDetail", {
           userData: userData,
           products: product,
@@ -70,7 +70,7 @@ const addToCart = async (req, res) => {
       res.redirect("/login");
     }
   } catch (error) {
-    console.log(error.message);
+    res.status(500).send({message:`${error}`})
   }
 };
 const viewCart = async (req, res) => {
@@ -125,7 +125,7 @@ const removeCart = async (req, res) => {
         item.total = total; // Add the total to the item object
         cartTotal += total; // Add the total to the cart total variable
       }
-      console.log(cartTotal);
+
 
       res.render("userViews/cartview", {
         userData: req.session.user,
@@ -136,7 +136,7 @@ const removeCart = async (req, res) => {
       throw new Error('User not logged in');
     }
   } catch (error) {
-    
+
     res.status(500).send('An error occurred while removing item from cart');
   }
 };
@@ -160,7 +160,7 @@ const cartUpdation = async (req, res) => {
 
     res.json("from backend ,cartUpdation json");
   } catch (error) {
-    console.log(error);
+    res.status(500).send({message:`${error}`})
   }
 };
 

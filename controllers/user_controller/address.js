@@ -51,7 +51,7 @@ const editAddress = async (req, res) => {
     const address = await Address.findById(addressId);
     res.render("userViews/editaddress", { userData, address });
   } catch (error) {
-    console.error(error);
+    res.status(500).send({message:`${error}`})
   }
 };
 
@@ -78,9 +78,34 @@ const editAddresspost = async (req, res) => {
     );
     res.redirect("/address");
   } catch (error) {
-    console.error(error);
+    res.status(500).send({message:`${error}`})
   }
 };
+
+const checkoutsaveaddress=async(req,res)=>{
+try {
+  const userData = req.session.user;
+    const id = userData._id;
+    const {name,mobile,address1,address2,city,state,zip}=req.body
+    const address = new Address({
+      owner: id,
+      name: name,
+      mobile: mobile,
+      address1: address1,
+      address2: address2,
+      city: city,
+      state: state,
+      zip: zip,
+    });
+    await address.save();
+    res.redirect("/checkout");
+
+} catch (error) {
+res.status(500).send({error:`${error}`})
+}
+
+}
+
 
 module.exports = {
   adressLoad,
@@ -88,4 +113,5 @@ module.exports = {
   addAddress,
   editAddress,
   editAddresspost,
+  checkoutsaveaddress
 };

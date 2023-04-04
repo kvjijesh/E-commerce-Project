@@ -22,8 +22,8 @@ const userSchema = new mongoose.Schema({
         required:true,
     },
     is_blocked:{
-        type:Number,
-        default:0
+        type:String,
+        default:false
 
     },
     is_verified:{
@@ -44,7 +44,7 @@ const userSchema = new mongoose.Schema({
           },
           cartTotal: {
             type: Number,
-            
+
           },
         },
       ],

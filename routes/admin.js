@@ -12,13 +12,13 @@ const user = require("../controllers/admin_controller/user");
 const order = require("../controllers/admin_controller/order");
 const dashboard = require("../controllers/admin_controller/dashboard");
 router.get("/", loginSignup.adminLogin);
-router.post("/", loginSignup.verifyAdminLogin);
-router.get("/signup", loginSignup.loadSignup);
-router.post("/signup", loginSignup.createAdmin);
+router.post("/", auth.isAdminLogout,loginSignup.verifyAdminLogin);
+router.get("/signup",auth.isAdminLogout, loginSignup.loadSignup);
+router.post("/signup",auth.isAdminLogout, loginSignup.createAdmin);
 router.get("/home", auth.isAdminLogin, dashboard.loadDashboard);
 router.get("/logout", auth.isAdminLogin, loginSignup.logout);
 router.get("/userList", auth.isAdminLogin, user.userList);
-router.get("/block/:id", user.blockUser);
+router.get("/block/:id",auth.isAdminLogin, user.blockUser);
 router.get("/product", auth.isAdminLogin, productController.getAllProducts);
 router.get(
   "/product/edit/:id",
@@ -26,7 +26,7 @@ router.get(
   productController.editProductLoad
 );
 router.post(
-  "/product/edit/:id",
+  "/product/edit/:id",auth.isAdminLogin,
   store.array("image", 5),
   productController.updateProduct
 );
@@ -38,6 +38,7 @@ router.get(
 //router.post('/product/addproduct',store.single('image'),productController.addProduct)
 router.post(
   "/product/addproduct",
+  auth.isAdminLogin,
   store.array("images", 5),
   productController.addProduct
 );
@@ -49,6 +50,7 @@ router.get(
 );
 router.post(
   "/category/addcategory",
+  auth.isAdminLogin,
   store.single("image"),
   categoryController.createCategory
 );
@@ -59,6 +61,7 @@ router.get(
 );
 router.post(
   "/category/edit/:id",
+  auth.isAdminLogin,
   store.single("image"),
   categoryController.updateCategory
 );
@@ -68,14 +71,14 @@ router.get(
   auth.isAdminLogin,
   productController.blockProduct
 );
-router.get("/coupon", coupon.couponPage);
-router.get("/create-coupon", coupon.createCouponLoad);
-router.post("/create-coupon", coupon.createCoupon);
-router.get("/order-list", order.orderList);
-router.post("/change-status", order.changeStatus);
-router.get("/delete-coupon/:id", coupon.deleteCoupon);
-router.get("/edit-coupon/:id", coupon.editCoupon);
-router.post("/edit-coupon/:id", coupon.updateCoupon);
+router.get("/coupon", auth.isAdminLogin,coupon.couponPage);
+router.get("/create-coupon",auth.isAdminLogin, coupon.createCouponLoad);
+router.post("/create-coupon",auth.isAdminLogin, coupon.createCoupon);
+router.get("/order-list",auth.isAdminLogin, order.orderList);
+router.post("/change-status",auth.isAdminLogin, order.changeStatus);
+router.get("/delete-coupon/:id",auth.isAdminLogin, coupon.deleteCoupon);
+router.get("/edit-coupon/:id",auth.isAdminLogin, coupon.editCoupon);
+router.post("/edit-coupon/:id",auth.isAdminLogin, coupon.updateCoupon);
 router.get("/banner", auth.isAdminLogin, banner.bannerLoad);
 router.get("/create-banner", auth.isAdminLogin, banner.createBannerLoad);
 router.post(
@@ -85,18 +88,18 @@ router.post(
   banner.createBanner
 );
 router.get("/edit-banner", auth.isAdminLogin, banner.editBannerLoad);
-router.post("/edit-banner", store.single("image"), banner.editBanner);
-router.get("/delete-banner", banner.deleteBanner);
-router.get("/dashboard", dashboard.homeload);
-router.get("/shipped", order.shippedOrders);
-router.get("/order-details", order.orderDetailsAdmin);
-router.get("/delivered", order.deliveredOrders);
-router.get("/returned", order.returnedOrders);
-router.post("/daily-report", dashboard.dailysales);
-router.get("/dailysales/download", dashboard.dailyDownload);
-router.post("/monthly-report", dashboard.monthlysales);
-router.get("/monthlysales/download", dashboard.monthlyDownload);
-router.post("/yearly-report", dashboard.yearlysales);
+router.post("/edit-banner",auth.isAdminLogin, store.single("image"), banner.editBanner);
+router.get("/delete-banner",auth.isAdminLogin, banner.deleteBanner);
+router.get("/dashboard",auth.isAdminLogin, dashboard.homeload);
+router.get("/shipped",auth.isAdminLogin, order.shippedOrders);
+router.get("/order-details",auth.isAdminLogin, order.orderDetailsAdmin);
+router.get("/delivered",auth.isAdminLogin, order.deliveredOrders);
+router.get("/returned",auth.isAdminLogin, order.returnedOrders);
+router.post("/daily-report",auth.isAdminLogin, dashboard.dailysales);
+router.get("/dailysales/download",auth.isAdminLogin, dashboard.dailyDownload);
+router.post("/monthly-report",auth.isAdminLogin, dashboard.monthlysales);
+router.get("/monthlysales/download",auth.isAdminLogin, dashboard.monthlyDownload);
+router.post("/yearly-report",auth.isAdminLogin, dashboard.yearlysales);
 router.get("/yearlysales/download", dashboard.yearlydownload);
 
 module.exports = router;

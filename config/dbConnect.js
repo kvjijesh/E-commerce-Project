@@ -8,7 +8,7 @@ console.log('Db connected');
 
 
     } catch (error) {
-        console.log("Data base error");
+        res.status(500).send({error:`${error}`})
     }
 }
 module.exports=dbConnect

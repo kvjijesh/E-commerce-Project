@@ -24,7 +24,7 @@ const loadDashboard = async (req, res) => {
     const adminData = await Admin.findById({ _id: id });
     res.render("adminViews/adminDashboard", { admin: adminData });
   } catch (error) {
-    console.log(error.message);
+    res.status(500).send({message:`${error}`})
   }
 };
 
@@ -165,7 +165,7 @@ const dailysales = async (req, res) => {
   );
   res.render("adminViews/dailysales", { dailyorders, totalOrderBill });
 } catch (error) {
-  console.error(error)
+  res.status(500).send({message:`${error}`})
 }
 };
 const dailyDownload = async (req, res) => {
@@ -209,7 +209,7 @@ const dailyDownload = async (req, res) => {
       res.end();
     })
     .catch((err) => {
-      console.log(err);
+
       res.status(500).send("An error occurred while generating the Excel file");
     });
 };
@@ -243,7 +243,7 @@ const monthlysales = async (req, res) => {
 
     res.render("adminViews/monthlyOrders", { monthlyOrders, totalMonthlyBill });
   } catch (error) {
-    console.log(error.message);
+    res.status(500).send({message:`${error}`})
   }
 };
 const monthlyDownload = async (req, res) => {
@@ -286,7 +286,6 @@ const monthlyDownload = async (req, res) => {
       res.end();
     })
     .catch((err) => {
-      console.log(err);
       res.status(500).send("An error occurred while generating the Excel file");
     });
 };
@@ -304,7 +303,7 @@ const yearlysales = async (req, res) => {
   );
   res.render("adminViews/yearlyorders", { yearlyorders, totalYearlyBill });
 } catch (error) {
-  console.error(error)
+  res.status(500).send({message:`${error}`})
 }
 };
 
@@ -349,7 +348,7 @@ const yearlydownload = async (req, res) => {
       res.end();
     })
     .catch((err) => {
-      console.log(err);
+
       res.status(500).send("An error occurred while generating the Excel file");
     });
 };

@@ -6,14 +6,14 @@ const securePassword = async (password) => {
     const passwordHash = await bcrypt.hash(password, 10);
     return passwordHash;
   } catch (error) {
-    console.log(error.message);
+    res.status(500).send({message:`${error}`})
   }
 };
 const adminLogin = async (req, res) => {
   try {
     res.render("adminViews/adminLogin");
   } catch (error) {
-    console.log(error.message);
+    res.status(500).send({message:`${error}`})
   }
 };
 const createAdmin = async (req, res) => {
@@ -57,14 +57,14 @@ const createAdmin = async (req, res) => {
     res.render("adminViews/adminSignup",{message:"Empty fields"})
   }
   } catch (error) {
-    console.log(error.message);
+    res.status(500).send({message:`${error}`})
   }
 };
 const loadSignup = async (req, res) => {
   try {
     res.render("adminViews/adminSignup");
   } catch (error) {
-    console.log(error.message);
+    res.status(500).send({message:`${error}`})
   }
 };
 
@@ -96,7 +96,7 @@ const verifyAdminLogin = async (req, res) => {
       res.render("adminViews/AdminLogin", { message: "Admin Not exist !!" });
     }
   } catch (error) {
-    console.log(error.message);
+    res.status(500).send({message:`${error}`})
   }
 };
 const logout = async (req, res) => {
@@ -104,7 +104,7 @@ const logout = async (req, res) => {
     req.session = null;
     res.redirect("/admin");
   } catch (error) {
-    console.log(error.message);
+    res.status(500).send({message:`${error}`})
   }
 };
 

@@ -34,7 +34,7 @@ const loadHome = async (req, res) => {
       res.send("category does not exist");
     }
   } catch (error) {
-    console.log(error.message);
+    res.status(500).send({message:`${error}`})
   }
 };
 
@@ -43,7 +43,7 @@ const profileLoad = async (req, res) => {
     const userData = req.session.user;
     res.render("userViews/userprofile", { userData });
   } catch (error) {
-    console.log(error.message);
+    res.status(500).send({message:`${error}`})
   }
 };
 
@@ -70,11 +70,11 @@ const editUserpost = async (req, res) => {
     );
     req.session.user = userData;
 
-    console.log(req.session.user);
+
 
     res.redirect("/profile");
   } catch (error) {
-    console.error(error);
+    res.status(500).send({message:`${error}`})
   }
 };
 
@@ -84,7 +84,7 @@ const deleteUser = async (req, res) => {
     await Address.deleteOne({ _id: id });
     res.redirect("/address");
   } catch (error) {
-    console.log(error.message);
+    res.status(500).send({message:`${error}`})
   }
 };
 

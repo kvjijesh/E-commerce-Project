@@ -1,7 +1,7 @@
 {{>userheader}}
 <style>
     address {
-        background-color: #d2caca;
+        background-color: #f7f1f1;
         border: 1px solid #ddd;
         border-radius: 5px;
         box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
@@ -23,7 +23,7 @@
     }
 
     .detail {
-        background-color: #d2caca;
+        background-color: #f4eeee;
         border: 1px solid #ddd;
         border-radius: 5px;
         box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
@@ -35,6 +35,15 @@
 
     .full {
         display: flex;
+
+        margin-top: 25px;
+
+            {
+                {
+                !-- text-align: center;
+                --
+            }
+        }
     }
 
     .left {}
@@ -46,6 +55,10 @@
 
     .next {
         margin-top: 50px;
+    }
+
+    .table {
+        border: 1px;
     }
 </style>
 <div class="container">
@@ -74,24 +87,43 @@
             <button id="invoice" class="btn btn-secondary" onclick="invoice('{{orderData._id}}')">INVOICE</button>
             {{/if}}
         </div>
-        <div class="full">
-            <div class="left">
-                <h6>ITEMS</h6>
-                {{#each orderData.items}}
-                <img style="width: 100px;" src="/images/{{this.product.image.[0]}}" alt="{{this.product.name}}">
-                <br>
-                <p>{{this.product.name}}</p>
-                {{/each}}
-            </div>
-            <div class="right">
-                <strong>ORDER ID: {{orderData.orderId}}</strong><br>
-                <strong>ORDER DATE: {{orderData.orderDate}}</strong><br>
-                <strong>ORDER BILL: Rs.{{orderData.orderBill}}</strong><br>
-                <strong class="status" id="order-{{orderData._id}}-status">ORDER STATUS: {{orderData.status}}</strong>
+
+        <div class="right">
+            <strong>ORDER ID: {{orderData.orderId}}</strong><br>
+            <strong>ORDER DATE: {{orderData.orderDate}}</strong><br>
+            <strong>ORDER BILL: Rs.{{orderData.orderBill}}</strong><br>
+            <strong class="status" id="order-{{orderData._id}}-status">ORDER STATUS: {{orderData.status}}</strong>
+        </div>
+        <div class="full p-0 mx-2 ">
+            <div class="w-75 p-0 ml-5 ">
+                <table class="table w-100">
+                    <thead>
+                        <tr>
+                            <th scope="col">PRODUCTS</th>
+                            <th scope="col">IMAGE</th>
+                            <th scope="col">QUANTITY</th>
+                            <th scope="col">PRICE</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {{#each orderData.items}}
+                        <tr>
+
+                            <td>{{this.product.name}}</td>
+                            <td> <img style="width: 100px;" src="/images/{{this.product.image.[0]}}"
+                                    alt="{{this.product.name}}"></td>
+                            <td>{{this.quantity}}</td>
+                            <td>{{this.product.price}}</td>
+
+                        </tr>
+                        {{/each}}
+                    </tbody>
+                </table>
             </div>
         </div>
-        <p id="cancelMessage"></p>
     </div>
+    <p id="cancelMessage"></p>
+</div>
 </div>
 <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 <script>
@@ -114,7 +146,7 @@
                             document.getElementById(`order-${orderId}-status`).innerHTML = "ORDER STATUS:" + `${updatedOrder.status}`
                             document.getElementById('cancellbutton').style.display = 'none'
                             document.getElementById('invoice').style.display = 'none'
-                            document.getElementById('cancelMessage').innerHTML='* Your refund will be credited to original payment mode with in 3-5 days.'
+                            document.getElementById('cancelMessage').innerHTML = '* Your refund will be credited to original payment mode with in 3-5 days.'
 
                         });
                 } else {
@@ -172,8 +204,6 @@
             console.log(error);
         }
     };
-
-
 
 
 </script>

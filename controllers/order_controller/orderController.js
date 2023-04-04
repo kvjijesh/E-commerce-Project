@@ -74,7 +74,7 @@ const checkoutPage = async (req, res) => {
       cartTotal,
     });
   } catch (error) {
-    console.log(error.message);
+    res.status(500).send({message:`${error}`})
     res.render("error");
   }
 };
@@ -156,7 +156,7 @@ const orderSummary = async (req, res) => {
       }
     }
   } catch (error) {
-    console.log(error.message);
+    res.status(500).send({message:`${error}`})
   }
 };
 
@@ -178,7 +178,7 @@ const viewOrders = async (req, res) => {
       owner: userData._id,
       status: { $nin: ["returned"] },
     }).count();
-    console.log(orderCount);
+
 
     res.render("userViews/viewOrders", {
       orderData: orderData,
@@ -188,7 +188,7 @@ const viewOrders = async (req, res) => {
       pages: Math.ceil(orderCount / Perpage),
     });
   } catch (error) {
-    console.log(error.message);
+    res.status(500).send({message:`${error}`})
   }
 };
 
@@ -204,21 +204,21 @@ const paymentLoad = async (req, res) => {
 
     res.render("userViews/paymentPage", { userData: userData, order });
   } catch (error) {
-    console.log(error.message);
+    res.status(500).send({message:`${error}`})
   }
 };
 
 const payment = async (req, res) => {
-  console.log(req.body);
+
   const { amount, currency } = req.body;
-  console.log(amount, currency);
+
   var options = {
     amount: amount * 100, // amount in the smallest currency unit
     currency: currency,
     receipt: "order_rcptid_1",
   };
   instance.orders.create(options, function (err, order) {
-    console.log(order);
+
     res.send({ orderId: order.id });
   });
 };
@@ -228,14 +228,13 @@ const verifyPayment = async (req, res) => {
     req.body.response.razorpay_order_id +
     "|" +
     req.body.response.razorpay_payment_id;
-  console.log(body);
+
 
   var expectedSignature = crypto
     .createHmac("sha256", "KkAXvkunE3WzLphvq5OJ6cHE")
     .update(body.toString())
     .digest("hex");
-  console.log("sig received ", req.body.response.razorpay_signature);
-  console.log("sig generated ", expectedSignature);
+
   var response = { signatureIsValid: "false" };
   if (expectedSignature === req.body.response.razorpay_signature)
     response = { signatureIsValid: "true" };
@@ -250,15 +249,15 @@ const orderDetails = async (req, res) => {
   try {
   const userData = req.session.user;
   const orderId = req.query.id;
-  console.log(orderId);
+
   const orderData = await Order.findById(orderId)
     .populate("items.product")
     .populate("address");
-  console.log(orderData);
+
 
   res.render("userViews/orderDetails", { userData, orderData });
 } catch (error) {
-console.error(error);
+  res.status(500).send({message:`${error}`})
 }
 };
 
@@ -273,7 +272,7 @@ const cancellOrder = async (req, res) => {
 
     res.json(updatedOrder);
   } catch (error) {
-    console.error(error);
+
     res.status(500).json({ error: "Something went wrong" });
   }
 };
@@ -288,7 +287,7 @@ const returnOrder = async (req, res) => {
     );
     res.json(updatedOrder);
   } catch (error) {
-    console.error(error);
+
     res.status(500).json({ error: "Something went wrong" });
   }
 };
@@ -308,7 +307,7 @@ const couponApply = async (req, res) => {
         .json({ error: "Coupon has already been used by the same user" });
     }
 
-    if (cartTotal > 499) {
+    if (cartTotal > coupon.minBill) {
       const discount = cartTotal * (couponDiscount / 100);
       const data = Math.floor(cartTotal - discount);
       coupon.usedby.push(userData._id);
@@ -319,7 +318,7 @@ const couponApply = async (req, res) => {
       res.status(400).json({ error: "Cart total must be greater than 499" });
     }
   } catch (error) {
-    console.log(error);
+    res.status(500).send({message:`${error}`})
   }
 };
 const pastOrder = async (req, res) => {
@@ -349,7 +348,7 @@ const pastOrder = async (req, res) => {
       pages: Math.ceil(orderCount / Perpage),
     });
   } catch (error) {
-    console.log(error.message);
+    res.status(500).send({message:`${error}`})
   }
 };
 
@@ -420,7 +419,7 @@ const invoicedown = async (req, res) => {
     // Download PDF
     res.download(filepath, filename);
   } catch (error) {
-    console.error(error);
+
     res.status(500).send("Internal server error");
   }
 };

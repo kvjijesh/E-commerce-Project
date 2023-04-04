@@ -13,7 +13,7 @@ const securePassword = async (password) => {
     const passwordHash = await bcrypt.hash(password, 10);
     return passwordHash;
   } catch (error) {
-    console.log(error.message);
+    res.status(500).send({message:`${error}`})
   }
 };
 
@@ -45,14 +45,14 @@ const sendOtp = async (name, email) => {
     });
     return otp;
   } catch (error) {
-    console.log(error.message);
+    res.status(500).send({message:`${error}`})
   }
 };
 const loadSignup = async (req, res) => {
   try {
     res.render("userViews/signup");
   } catch (error) {
-    console.log(error.message);
+    res.status(500).send({message:`${error}`})
   }
 };
 
@@ -68,7 +68,7 @@ const otpsubmit = async (req, res) => {
           mobile: userRegData.mobile,
           email: userRegData.email,
           password: spassword,
-          is_blocked: 0,
+          is_blocked: false,
           is_verified: 0,
         });
         const userData = await user.save();
@@ -82,7 +82,7 @@ const otpsubmit = async (req, res) => {
       res.render("userViews/verifyOtp", { message: "Please enter OTP" });
     }
   } catch (error) {
-    console.error(error);
+    res.status(500).send({message:`${error}`})
   }
 };
 
@@ -104,24 +104,24 @@ const createUser = async (req, res) => {
       }
     }
   } catch (error) {
-    console.log(error.message);
+    res.status(500).send({message:`${error}`})
   }
 };
 const loadLogin = async (req, res) => {
   try {
     res.render("userViews/login", { title: "Login" });
   } catch (error) {
-    console.log(error.message);
+    res.status(500).send({message:`${error}`})
   }
 };
 const verifyLogin = async (req, res) => {
   try {
     const {email,password}=req.body
     const userData = await User.findOne({ email: email });
-    const isBlock = userData.is_blocked;
-
     if (userData) {
-      if (!isBlock) {
+      const isBlock = userData.is_blocked;
+      console.log(isBlock,55644)
+      if (isBlock=="false") {
         const passwordMatch = await bcrypt.compare(password, userData.password);
         if (passwordMatch) {
           req.session.user = userData;
@@ -151,23 +151,23 @@ const userLogout = async (req, res) => {
     req.session.destroy();
     res.redirect("/");
   } catch (error) {
-    console.log(error.message);
+    res.status(500).send({message:`${error}`})
   }
 };
 const forgetLoad = async (req, res) => {
   try {
-    res.render("userViews/enterEmail");
+   res.render("userViews/enterEmail");
+
   } catch (error) {
-    console.log(error.message);
-    res.render("error");
+    res.status(500).send({message:`${error}`})
   }
 };
 const forgetPostOtp = async (req, res) => {
   try {
     uEmail = req.body.email;
-    console.log(uEmail);
+
     const userExist = await User.findOne({ email: uEmail });
-    console.log(userExist);
+
     if (userExist == null) {
       res.render("userViews/enterEmail", { message: "Email does not exist" });
     } else {
@@ -182,7 +182,7 @@ const forgetPostOtp = async (req, res) => {
       }
     }
   } catch (error) {
-    res.render("error");
+    res.status(500).send({message:`${error}`})
   }
 };
 
@@ -195,14 +195,14 @@ const forgetOtpVerify = async (req, res) => {
       res.render("userViews/forgetOtpVerify", { message: "Invalid OTP" });
     }
   } catch (error) {
-    res.render("error");
+    res.status(500).send({message:`${error}`})
   }
 };
 
 const resetPassword = async (req, res) => {
   try {
     const password = req.body.password;
-    console.log(password);
+
     const spassword = await securePassword(password);
     //const user=await User.findOne({email:uEmail})
     const user = await User.findOneAndUpdate(
@@ -210,11 +210,11 @@ const resetPassword = async (req, res) => {
       { password: spassword },
       { new: true }
     );
-    console.log(user);
+
     // res.render('userViews/login',{mymessage:'Password reset successfull please login'})
     res.redirect("/login");
   } catch (error) {
-    res.render("error");
+    res.status(500).send({message:`${error}`})
   }
 };
 

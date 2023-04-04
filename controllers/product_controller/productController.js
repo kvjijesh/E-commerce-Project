@@ -15,18 +15,18 @@ hbs.registerHelper("or", function (a, b) {
 const addProduct = async (req, res) => {
   try {
     const userGivenCat = req.body.category;
-    console.log(userGivenCat);
+
     const category = await Category.find({ name: userGivenCat });
-    console.log(category);
+
     const categoryId = category._id;
-    // console.log(category);
-    // console.log(req.body);
+    //
+    //
     // if(!category){
 
     //     res.render('adminViews/addproduct',{message:"Category does not exist "})
     // }
     const file = req.files;
-    console.log(file);
+
     const images = [];
     file.forEach((file) => {
       const image = file.filename;
@@ -34,8 +34,7 @@ const addProduct = async (req, res) => {
     });
 
     const basePath = "/images/";
-    console.log(req.body.name);
-    console.log(basePath);
+
     const product = new Product({
       name: req.body.name,
       description: req.body.description,
@@ -54,10 +53,10 @@ const addProduct = async (req, res) => {
     // res.status(201).json(product)
     res.redirect("/admin/product");
   } catch (error) {
-    console.log(error.message);
-    // res.status(500).json({
-    //     message:error.message
-    // })
+
+    res.status(500).json({
+        message:error.message
+    })
   }
 };
 
@@ -106,7 +105,7 @@ const editProductLoad = async (req, res) => {
       res.redirect("/admin/home");
     }
   } catch (error) {
-    console.log(error.message);
+    res.status(500).send({message:`${error}`})
   }
 };
 
@@ -120,7 +119,7 @@ const updateProduct = async (req, res) => {
     }
 
     const category = await Category.findById(req.body.category);
-    console.log(category);
+
     if (!category) {
       return res.status(404).json({
         message: "category not found",
@@ -153,7 +152,7 @@ const updateProduct = async (req, res) => {
       },
       { new: true }
     );
-    console.log(product);
+
     if (!product) {
       return res.status(404).json({
         message: "product canot be upated",
@@ -169,11 +168,11 @@ const updateProduct = async (req, res) => {
 };
 const addProductLoad = async (req, res) => {
   const category = await Category.find();
-  console.log(category);
+
   try {
     res.render("adminViews/addproduct", { category: category });
   } catch (error) {
-    console.log(error.message);
+    res.status(500).send({message:`${error}`})
   }
 };
 
@@ -181,7 +180,7 @@ const userproductload = async (req, res) => {
   try {
     const categories = await Category.find();
     const { category, sort } = req.query;
-    console.log(req.query);
+
 
     const filter = { is_blocked: false };
     if (category) {
@@ -228,7 +227,7 @@ const productDetailLoad = async (req, res) => {
     const id = req.query.id;
     const userData = req.session.user;
     const prodData = await Product.findById({ _id: id });
-    console.log(prodData);
+
 
     if (req.session.user) {
       const isCart = await User.findOne({
@@ -264,15 +263,15 @@ const womenProductLoad = async (req, res) => {
     category: categoryId,
     is_blocked: false,
   });
-  console.log(productWomen, categoryId);
+
   if (userData) {
-    console.log(productWomen);
+
     res.render("userViews/womenpage", { women: productWomen, userData });
   } else {
     res.render("userViews/womenpage", { women: productWomen });
   }
 } catch (error) {
-  console.log(error)
+  res.status(500).send({message:`${error}`})
 }
 };
 const menProductLoad = async (req, res) => {
@@ -283,11 +282,11 @@ const menProductLoad = async (req, res) => {
     category: categoryId,
     is_blocked: false,
   });
-  console.log(productmen);
+
   res.render("userViews/menspage", { men: productmen });
 
 } catch (error) {
-  console.log(error)
+  res.status(500).send({message:`${error}`})
 }
 };
 
@@ -306,13 +305,13 @@ const blockProduct = async (req, res) => {
     );
     res.redirect("/admin/product");
   } catch (error) {
-    console.log(error.message);
+    res.status(500).send({message:`${error}`})
   }
 };
 const productsearch = async (req, res) => {
   try {
     const query = req.query.q;
-    console.log(query);
+
 
     const results = await Product.find({
       $or: [
@@ -321,10 +320,10 @@ const productsearch = async (req, res) => {
       ],
     });
 
-    console.log(results);
+    
     res.json(results);
   } catch (error) {
-    console.log(error);
+    res.status(500).send({message:`${error}`})
   }
 };
 
