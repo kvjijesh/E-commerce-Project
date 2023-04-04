@@ -121,7 +121,7 @@ const verifyLogin = async (req, res) => {
     if (userData) {
       const isBlock = userData.is_blocked;
       console.log(isBlock,55644)
-      if (isBlock=="false") {
+      if (isBlock==false) {
         const passwordMatch = await bcrypt.compare(password, userData.password);
         if (passwordMatch) {
           req.session.user = userData;

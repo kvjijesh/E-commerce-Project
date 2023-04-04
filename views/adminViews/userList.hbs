@@ -28,7 +28,7 @@
       <td>{{this.is_blocked}}</td>
 
 
-         {{#if (eq this.is_blocked 'true')}}
+         {{#if (eq this.is_blocked true)}}
               <td><a class="btn btn-success" href="/admin/block/{{this._id}}">Ublock </a></td>
               {{else}}
               <td><a class="btn btn-danger" href="/admin/block/{{this._id}}">Block </a></td>

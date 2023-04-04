@@ -7,7 +7,7 @@ const blockfun = async (paramsId) => {
   try {
     const abc = await User.findByIdAndUpdate(
       paramsId,
-      { $set: { is_blocked: "true" } },
+      { $set: { is_blocked: true } },
       { new: true }
     );
     return abc;
@@ -19,7 +19,7 @@ const unblockfun = async (paramsId) => {
   try {
     const bcd = await User.findByIdAndUpdate(
       paramsId,
-      { $set: { is_blocked: "false"} },
+      { $set: { is_blocked: false} },
       { new: true }
     );
     return bcd;
@@ -44,10 +44,10 @@ const blockUser = async (req, res) => {
     const userblocked = blocked.is_blocked;
     console.log(userblocked,2256,blocked)
 
-    if (userblocked=="true") {
+    if (userblocked==true) {
       unblockfun(req.params.id);
       res.redirect("/admin/userList");
-    } else if(userblocked=="false") {
+    } else if(userblocked==false) {
       blockfun(req.params.id);
 
       res.redirect("/admin/userList");
