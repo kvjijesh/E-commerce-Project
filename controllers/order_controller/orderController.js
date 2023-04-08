@@ -138,6 +138,7 @@ const orderSummary = async (req, res) => {
           paymentMode: req.body.paymentMethod,
           orderBill: req.body.cartTotal,
           discount: discount,
+          status:"pending",
           orderDate: formattedDate,
           orderId: orderId,
         });
