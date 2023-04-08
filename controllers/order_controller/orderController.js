@@ -95,7 +95,7 @@ const orderSummary = async (req, res) => {
         quantity: item.quantity,
       };
     });
-    if(req.body&&address&&cartTotal&&paymentMode){
+
 
 
     if (paymentMode == "cashondelivery") {
@@ -161,10 +161,8 @@ const orderSummary = async (req, res) => {
       }
     }
   }
-  else{
-        res.send({message:"something went wrong"})
-  }
-  } catch (error) {
+
+   catch (error) {
     res.status(500).send({message:`${error}`})
   }
 };
@@ -372,13 +370,17 @@ const invoicedown = async (req, res) => {
 
 
     const productdata = orderdata.items
+    const gstRate = 2 // GST rate in percentage
 
     const invoiceItems = []
 
-    productdata.map((item) => {
+    productdata.forEach((item) => {
       const product = item.product
       const quantity = item.quantity
-      const total = product.price * quantity
+      const subtotal = product.price * quantity
+      const gstValue = (subtotal * gstRate) / 100 // Calculate GST value
+      const total = subtotal + gstValue // Calculate total price including GST
+
       const pro = {
         'name': `${product.name}`,
         "quantity": `${quantity}`,
@@ -389,6 +391,7 @@ const invoicedown = async (req, res) => {
 
       invoiceItems.push(pro);
     })
+
 
     var currentDate = new Date()
 
@@ -434,6 +437,7 @@ const invoicedown = async (req, res) => {
       "settings": {
         "currency": "INR",
         "locale": "nl-NL",
+        "tax-notation": "gst",
         "margin-top": 25,
         "margin-right": 25,
         "margin-left": 25,
