@@ -2,14 +2,12 @@ const Banner = require("../../models/bannerModel");
 
 const bannerLoad = async (req, res) => {
   try {
-    const banner =  await Banner.find();
+    const banner = await Banner.find();
     res.render("adminViews/banner", { banner });
   } catch (error) {
-
-    res.render("error",{error:error});
+    res.render("error", { error: error });
   }
 };
-
 
 const createBannerLoad = async (req, res) => {
   try {
@@ -20,7 +18,6 @@ const createBannerLoad = async (req, res) => {
 };
 
 const createBanner = async (req, res) => {
-
   try {
     const { file } = req;
     const fileName = file.filename;
@@ -33,7 +30,7 @@ const createBanner = async (req, res) => {
     });
     res.redirect("/admin/banner");
   } catch (error) {
-    res.render("error", { error:error});
+    res.render("error", { error: error });
   }
 };
 
@@ -43,15 +40,13 @@ const editBannerLoad = async (req, res) => {
     if (!banner) throw new Error("Banner not found");
     res.render("adminViews/editBanner", { banner });
   } catch (error) {
-
     res.status(500).send(`${error}`);
   }
 };
 
-
 const editBanner = async (req, res) => {
   try {
-    const bannerId  = req.query.id;
+    const bannerId = req.query.id;
     const bannerImg = await Banner.findById(bannerId);
     const exstImg = bannerImg.image;
 
@@ -81,12 +76,12 @@ const editBanner = async (req, res) => {
 
     res.redirect("/admin/banner");
   } catch (error) {
-    res.status(500).send({message:`${error}`})
+    res.status(500).send({ message: `${error}` });
   }
 };
 
 const deleteBanner = async (req, res) => {
-  const id  = req.query.id;
+  const id = req.query.id;
   try {
     await Banner.findByIdAndDelete(id);
     res.redirect("/admin/banner");

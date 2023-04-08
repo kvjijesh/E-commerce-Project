@@ -8,6 +8,7 @@ hbs.registerHelper("calculateItemPrice", function (item) {
   return item.product.price * item.quantity;
 });
 
+
 const addToCart = async (req, res) => {
   try {
     const userData = req.session.user;
@@ -60,7 +61,7 @@ const addToCart = async (req, res) => {
         req.session.user = updatedUser;
 
         const userData = req.session.user;
-        
+
         res.render("userViews/productDetail", {
           userData: userData,
           products: product,
@@ -73,6 +74,7 @@ const addToCart = async (req, res) => {
     res.status(500).send({message:`${error}`})
   }
 };
+
 const viewCart = async (req, res) => {
   try {
     const userData = req.session.user;

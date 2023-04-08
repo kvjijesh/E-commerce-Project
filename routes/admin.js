@@ -90,7 +90,7 @@ router.post(
 router.get("/edit-banner", auth.isAdminLogin, banner.editBannerLoad);
 router.post("/edit-banner",auth.isAdminLogin, store.single("image"), banner.editBanner);
 router.get("/delete-banner",auth.isAdminLogin, banner.deleteBanner);
-router.get("/dashboard",auth.isAdminLogin, dashboard.homeload);
+router.get("/dashboard", auth.isAdminLogin,dashboard.homeload);
 router.get("/shipped",auth.isAdminLogin, order.shippedOrders);
 router.get("/order-details",auth.isAdminLogin, order.orderDetailsAdmin);
 router.get("/delivered",auth.isAdminLogin, order.deliveredOrders);

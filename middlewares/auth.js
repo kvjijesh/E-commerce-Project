@@ -3,11 +3,12 @@ const  User=require('../models/userModel')
 var isLogin = async(req,res,next)=>{
     try {
 
-        if(req.session.userData){}
-        else{
-            res.redirect('/')
+        if(req.session.user){
+            next()
         }
-        next()
+        else{
+            res.redirect('/login')
+        }
     } catch (error) {
         console.log(error.message);
     }
@@ -15,9 +16,10 @@ var isLogin = async(req,res,next)=>{
 }
 var isLogout = async(req,res,next)=>{
     try {
-        if(req.session.userData){
+        if(req.session.user){
             res.redirect('/home')
         }
+        else
         next()
 
     } catch (error) {
@@ -28,8 +30,6 @@ var isLogout = async(req,res,next)=>{
 
 const isBlocked=async(req,res,next)=>{
     try {
-
-
     const userData= req.session.user;
     const id= userData._id
      const user = await User.findById(id)

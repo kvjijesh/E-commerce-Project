@@ -76,13 +76,14 @@ const checkoutPage = async (req, res) => {
     });
   } catch (error) {
     res.status(500).send({message:`${error}`})
-    res.render("error");
+
   }
 };
 
 const orderSummary = async (req, res) => {
   try {
     const { address, cartTotal, paymentMode, discount } = req.body;
+    console.log(req.body)
     const orderDate = new Date();
     const formattedDate = moment(orderDate).format("DD-MM-YYYY");
     const userData = req.session.user;
@@ -94,6 +95,9 @@ const orderSummary = async (req, res) => {
         quantity: item.quantity,
       };
     });
+    if(req.body&&address&&cartTotal&&paymentMode){
+
+
     if (paymentMode == "cashondelivery") {
       const orderId = generateOrderId();
 
@@ -156,6 +160,10 @@ const orderSummary = async (req, res) => {
         res.redirect("/product");
       }
     }
+  }
+  else{
+        res.send({message:"something went wrong"})
+  }
   } catch (error) {
     res.status(500).send({message:`${error}`})
   }
@@ -389,7 +397,7 @@ const invoicedown = async (req, res) => {
       "customize": {
 
       },
-     
+
       // Your own data
       "sender": {
         "company": "STYLE MAVEN",
@@ -413,7 +421,7 @@ const invoicedown = async (req, res) => {
         // Invoice number
         "number": `${orderdata.orderId}`,
         // Invoice data
-        "date": `${orderdata.orderDate}`,
+        "date": `${orderdata.orderDate}`
 
       },
 
@@ -426,7 +434,6 @@ const invoicedown = async (req, res) => {
       "settings": {
         "currency": "INR",
         "locale": "nl-NL",
-        "tax-notation": "gst",
         "margin-top": 25,
         "margin-right": 25,
         "margin-left": 25,
