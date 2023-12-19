@@ -1,27 +1,27 @@
 {{>userheader}}
 <style>
-  .table {
-    border-collapse: separate;
-    border-spacing: 0 20px;
+	.table {
+		border-collapse: separate;
+		border-spacing: 0 20px;
 
-  }
+	}
 
-  .detail-button {
+	.detail-button {
 
-    background-color: #4f9bff;
-    color: white;
-    font-size: 16px;
-    padding: 8px 15px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
+		background-color: #4f9bff;
+		color: white;
+		font-size: 16px;
+		padding: 8px 15px;
+		border: none;
+		border-radius: 5px;
+		cursor: pointer;
 
-  }
+	}
 
-  #header {
-    font-weight: bolder;
+	#header {
+		font-weight: bolder;
 
-  }
+	}
 </style>
 <style>
 	@import url(http://fonts.googleapis.com/css?family=Calibri:400,300,700);
@@ -80,55 +80,56 @@
 
 <div class="container">
 
-  <h5 id="header">Your Orders</h5>
-  <div class="table-responsive">
+	<h5 id="header">Your Orders</h5>
+	<div class="table-responsive">
 
-    <table class="table">
-      <thead style="color:brown; size: 20px">
+		<table class="table">
+			<thead style="color:brown; size: 20px">
 
-        <td><strong>ORDER ID</strong></td>
-        <td><strong>DATE</strong></td>
+				<td><strong>ORDER ID</strong></td>
+				<td><strong>DATE</strong></td>
 
-        <td><strong>PAYMENT MODE</strong></td>
-        <td><strong>ORDER STATUS</strong></td>
-        <td><strong>TOTAL</strong></td>
-        <td><strong>ACTION</strong></td>
+				<td><strong>PAYMENT MODE</strong></td>
+				<td><strong>ORDER STATUS</strong></td>
+				<td><strong>TOTAL</strong></td>
+				<td><strong>ACTION</strong></td>
 
-      </thead>
+			</thead>
 
-      {{#each orderData}}
+			{{#each orderData}}
 
-      <tbody>
-        <tr>
-          <td>{{this.orderId}}</td>
-          <td>{{this.orderDate}}</td>
-          <td>{{this.paymentMode}}</td>
-          <td>{{this.status}}</td>
-          <td>{{this.orderBill}}</td>
-          <td>
-            {{!-- <button class="detail-button"> <a href="/order-details"></a> VIEW DETAILS</button> --}}
-            <a style="text-decoration: none;" class="detail-button" href="/order-details?id={{this._id}}">VIEW
-              DETAILS</a>
-          </td>
-      </tbody>
+			<tbody>
+				<tr>
+					<td>{{this.orderId}}</td>
+					<td>{{this.orderDate}}</td>
+					<td>{{this.paymentMode}}</td>
+					<td>{{this.status}}</td>
+					<td>{{this.orderBill}}</td>
+					<td>
+						{{!-- <button class="detail-button"> <a href="/order-details"></a> VIEW DETAILS</button> --}}
+						<a style="text-decoration: none;" class="detail-button"
+							href="/order-details?id={{this._id}}">VIEW
+							DETAILS</a>
+					</td>
+			</tbody>
 
-      {{/each}}
+			{{/each}}
 
-    </table>
+		</table>
 
-    <nav aria-label="Page navigation example">
-      <ul class="pagination">
+		<nav aria-label="Page navigation example">
+			<ul class="pagination">
 
-        {{#for 1 pages 1}}
-        <li class="page-item"><a class="page-link" href="/view-order?page={{this}}">{{this}}</a></li>
+				{{#for 1 pages 1}}
+				<li class="page-item"><a class="page-link" href="/view-order?page={{this}}">{{this}}</a></li>
 
-        {{/for}}
+				{{/for}}
 
-      </ul>
-    </nav>
-  </div>
+			</ul>
+		</nav>
+	</div>
 
-  <a class="btn btn-success mb-3" href="/past-orders">Past Orders</a>
+	<a class="btn btn-success mb-3" href="/past-orders">Past Orders</a>
 </div>
 {{else}}
 

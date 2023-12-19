@@ -82,8 +82,9 @@ const checkoutPage = async (req, res) => {
 
 const orderSummary = async (req, res) => {
   try {
-    const { address, cartTotal, paymentMode, discount } = req.body;
+    const { address, cartTotal, paymentMethod, discount } = req.body;
     console.log(req.body)
+    console.log(paymentMethod);
     const orderDate = new Date();
     const formattedDate = moment(orderDate).format("DD-MM-YYYY");
     const userData = req.session.user;
@@ -98,7 +99,7 @@ const orderSummary = async (req, res) => {
 
 
 
-    if (paymentMode == "cashondelivery") {
+    if (paymentMethod == "cashondelivery") {
       const orderId = generateOrderId();
 
       if (user.cart.length > 0) {
@@ -106,7 +107,7 @@ const orderSummary = async (req, res) => {
           owner: userData._id,
           address: address,
           items: cartItems,
-          paymentMode: paymentMode,
+          paymentMode: paymentMethod,
           orderBill: cartTotal,
           discount: discount,
           orderDate: formattedDate,
@@ -154,8 +155,6 @@ const orderSummary = async (req, res) => {
         user.cart = [];
         const newuserData = await user.save();
         req.session.user = newuserData;
-
-        //res.redirect('/payments')
         res.json(order);
       } else {
         res.redirect("/product");
